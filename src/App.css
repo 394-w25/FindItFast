@@ -1,42 +1,134 @@
+/* General body styling */
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #f7f7f7;
+}
+
+/* App container */
 .App {
   text-align: center;
+  max-width: 480px; /* Limit width to phone screen size */
+  margin: 0 auto; /* Center the app in the viewport */
+  background-color: #fff;
+  border-radius: 20px; /* Rounded edges for a phone-like appearance */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* Shadow to elevate app */
+  overflow: hidden; /* Ensure contents stay within bounds */
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+/* Header styling */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px;
+  background-color: #eae7f5;
+  border-bottom: 1px solid #ddd;
+  position: sticky;
+  top: 0;
+  z-index: 10;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+.found-image {
+  width: 80%; /* Makes the image responsive */
+  max-width: 150px; /* Ensures the image doesn't exceed this size */
+  display: inline-block; /* Ensures the image respects text alignment */
+  height: auto; /* Maintains the aspect ratio */
+  border-radius: 10px; /* Optional: Rounds the corners of the image */
+  object-fit: cover; /* Ensures the image fits nicely inside its container */
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+.search-bar {
+  flex: 1;
+  padding: 10px;
+  margin-right: 10px;
+  border: 1px solid #ccc;
+  border-radius: 20px;
+  font-size: 14px;
+  outline: none;
+}
+
+.profile-icon {
+  font-size: 24px;
+  cursor: pointer;
+  color: #4c3c91;
+}
+
+/* Item list styling */
+.item-list {
+  padding: 10px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+  gap: 15px;
 }
 
-.App-link {
-  color: #61dafb;
+/* Individual item card styling */
+.item-card {
+  background-color: #fff;
+  border-radius: 15px;
+  padding: 15px;
+  width: 100%;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
+.item-card h2 {
+  margin: 0;
+  color: #4c3c91;
+  font-size: 18px;
+}
+
+.item-card p {
+  margin: 0;
+  color: #555;
+  font-size: 14px;
+}
+
+.item-card img {
+  width: 100%;
+  border-radius: 10px;
+  height: auto;
+}
+
+/* Claim button */
+.claim-button {
+  background-color: #6a4cc3;
+  color: #fff;
+  border: none;
+  padding: 10px;
+  border-radius: 25px;
+  cursor: pointer;
+  font-size: 16px;
+  text-align: center;
+}
+
+.claim-button:hover {
+  background-color: #533a91;
+}
+
+/* Make it look better on smaller screens */
+@media screen and (max-width: 480px) {
+  .App {
+    border-radius: 0;
+    box-shadow: none;
   }
-  to {
-    transform: rotate(360deg);
-  }
-}
 
-button {
-  font-size: calc(10px + 2vmin);
+  .item-card {
+    padding: 10px;
+  }
+
+  .search-bar {
+    font-size: 12px;
+    padding: 8px;
+  }
+
+  .claim-button {
+    font-size: 14px;
+    padding: 8px;
+  }
 }
