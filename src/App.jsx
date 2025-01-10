@@ -1,43 +1,49 @@
-import { useState } from 'react';
-import logo from './logo.svg';
+import React from 'react';
 import './App.css';
 
 const App = () => {
-  const [count, setCount] = useState(0);
+  // Sample data for lost items
+  const items = [
+    {
+      id: 1,
+      title: 'Pikachu Plushie',
+      description: 'Lost yellow pikachu plushie, about 7" tall',
+      image: 'images/pikachu.jpg', 
+    },
+    {
+      id: 2,
+      title: 'Airpods',
+      description: 'White case with initials AO on the side. Found in back table of periodicals',
+      image: 'images/airpods.jpeg', 
+    },
+    {
+      id: 3,
+      title: 'Water Bottle',
+      description: 'Black hydroflask found in Tech LR3 at aorund 11am Tuesday 1/10',
+      image: 'images/hydroflask.jpg', 
+    },
+  ];
 
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>Hello Vite + React!</p>
-        <p>
-          <button onClick={() => setCount(count => count + 1)}>
-            count is: {count}
-          </button>
-        </p>
-        <p>
-          Edit <code>App.jsx</code> and save to test hot module replacement (HMR).
-        </p>
-        <p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-          {' | '}
-          <a
-            className="App-link"
-            href="https://vitejs.dev/guide/features.html"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Vite Docs
-          </a>
-        </p>
+      <header className="header">
+        <input
+          type="text"
+          placeholder="Search an item..."
+          className="search-bar"
+        />
+        <div className="profile-icon">👤</div>
       </header>
+      <main className="item-list">
+        {items.map((item) => (
+          <div key={item.id} className="item-card">
+            <h2>{item.title}</h2>
+            <p>{item.description}</p>
+            <img src={item.image} alt={item.title} class="found-image" />
+            <button className="claim-button">Claim</button>
+          </div>
+        ))}
+      </main>
     </div>
   );
 };
