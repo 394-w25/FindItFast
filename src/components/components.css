@@ -179,6 +179,13 @@ body {
     text-decoration: underline;
 }
 
+.error-message {
+    color: red;
+    font-size: 14px;
+    margin-top: 0px;
+    margin-bottom: 0px;
+}
+
 /* Make it look better on smaller screens */
 @media screen and (max-width: 480px) {
     .App {
