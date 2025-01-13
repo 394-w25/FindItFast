@@ -17,7 +17,8 @@ L.Icon.Default.mergeOptions({
   shadowUrl: markerShadow,
 });
 
-const MapView = ({ items, center = [37.7749, -122.4194], zoom = 13 }) => {
+
+const MapView = ({ items, center = [42.05785391642652, -87.67568630010838], zoom = 13 }) => {
   return (
     <MapContainer center={center} zoom={zoom} className="map-view">
       <TileLayer

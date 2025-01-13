@@ -13,28 +13,30 @@ const FoundFeed = () => {
       title: 'Pikachu Plushie',
       description: 'Lost yellow pikachu plushie, about 7" tall',
       image: 'images/pikachu.jpg',
-      timestamp: '2025-01-10T11:00:00Z',
-      latitude: 37.7749,
-      longitude: -122.4194,
+      timestamp: '2025-01-13T09:00:00Z', // Updated timestamp
+      latitude: 42.05353219296991,
+      longitude: -87.67261584023835,
+
     },
     {
       id: 2,
       title: 'Airpods',
-      description: 'White case with initials AO on the side. Found in back table of periodicals',
+      description: 'White case with initials AO on the side. Found in spac',
       image: 'images/airpods.jpeg',
-      timestamp: '2025-01-11T15:30:00Z',
-      latitude: 34.0522,
-      longitude: -118.2437,
+      timestamp: '2025-01-13T13:30:00Z', // Updated timestamp
+      latitude: 42.059454450657405,
+      longitude: -87.67212895136183,
     },
     {
       id: 3,
       title: 'Water Bottle',
       description: 'Black hydroflask found in Tech LR3 at around 11am Tuesday 1/10',
       image: 'images/hydroflask.jpg',
-      timestamp: '2025-01-09T11:00:00Z',
-      latitude: 40.7128,
-      longitude: -74.0060,
+      timestamp: '2025-01-12T11:00:00Z', // Updated timestamp
+      latitude: 42.057546315505526,
+      longitude: -87.67603257548079,
     },
+    // Add more items as needed
   ]);
 
   const [isModalOpen, setIsModalOpen] = useState(false);

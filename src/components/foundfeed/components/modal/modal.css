@@ -18,6 +18,7 @@
   border-radius: 10px;
   padding: 20px;
   position: relative;
+  min-width: 330px;
   max-width: 90%;
   max-height: 90%;
   overflow: auto;

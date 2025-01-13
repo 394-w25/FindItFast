@@ -1,6 +1,7 @@
 /* SearchBar.css */
 
 .search-bar-card {
+    padding-left: 5%;
     background-color: #fff;
     padding: 10px 15px;
     border-radius: 20px;
@@ -18,5 +19,13 @@
   
   .search-input::placeholder {
     color: #999;
+  }
+    
+/* Make it look better on smaller screens */
+@media screen and (max-width: 480px) {
+    .search-bar-card {
+      padding: 10px;
+      max-width: 200px;
+    }
   }
   
