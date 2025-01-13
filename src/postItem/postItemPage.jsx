@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import { db, storage } from '../firebase';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-import { collection, addDoc } from 'firebase/firestore';
+import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import './PostItemPage.css'; // Import CSS here
-
 
 const PostItemPage = () => {
     const [description, setDescription] = useState('');
     const [image, setImage] = useState(null);
+    const [loading, setLoading] = useState(false);  // Added for better UX feedback
 
     const handleImageChange = (e) => {
         const file = e.target.files[0];
@@ -18,22 +18,28 @@ const PostItemPage = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        if (!image || !description) {
-            alert('Please provide an image and description.');
+        
+        // Prevent double submission
+        if (loading) return;
+
+        if (!image || !description.trim()) {
+            alert('Please provide both an image and description.');
             return;
         }
 
+        setLoading(true);  // Show loading state while submitting
+
         try {
             // Upload image to Firebase Storage
-            const imageRef = ref(storage, `images/${image.name}`);
+            const imageRef = ref(storage, `images/${Date.now()}_${image.name}`);
             await uploadBytes(imageRef, image);
             const imageUrl = await getDownloadURL(imageRef);
 
             // Store data in Firestore
             await addDoc(collection(db, 'items'), {
-                description: description,
-                imageUrl: imageUrl,
-                timestamp: new Date()
+                description,
+                imageUrl,
+                timestamp: serverTimestamp() // Firebase server timestamp for consistency
             });
 
             alert('Item posted successfully!');
@@ -41,12 +47,14 @@ const PostItemPage = () => {
             setImage(null);
         } catch (error) {
             console.error('Error posting item:', error);
-            alert('Failed to post item.');
+            alert('Failed to post item. Please try again.');
+        } finally {
+            setLoading(false);  // Reset loading state
         }
     };
 
     return (
-        <div>
+        <div className="post-item-page">
             <h2>Post a Lost/Found Item</h2>
             <form onSubmit={handleSubmit}>
                 <input
@@ -55,8 +63,12 @@ const PostItemPage = () => {
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
                 />
-                <input type="file" onChange={handleImageChange} />
-                <button type="submit">Post Item</button>
+                <input type="file" accept="image/*" onChange={handleImageChange} />
+                
+                {/* Disable button during upload for better UX */}
+                <button type="submit" disabled={loading}>
+                    {loading ? "Posting..." : "Post Item"}
+                </button>
             </form>
         </div>
     );
