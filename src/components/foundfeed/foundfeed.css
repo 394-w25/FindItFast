@@ -1,0 +1,51 @@
+/* FoundFeed.css */
+
+.found-feed {
+    position: relative;
+    background-color: #fff;
+    min-height: 100vh;
+  }
+  
+  .found-feed-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 15px;
+    background-color: #eae7f5;
+    border-bottom: 1px solid #ddd;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+  
+  .view-mode-buttons {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+  }
+  
+  .view-button {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 20px;
+    background-color: #ccc;
+    cursor: pointer;
+    font-size: 14px;
+  }
+  
+  .view-button.active {
+    background-color: #6a4cc3;
+    color: #fff;
+  }
+  
+  .found-feed-main {
+    padding: 10px;
+  }
+  
+  .item-list {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+  }
+  

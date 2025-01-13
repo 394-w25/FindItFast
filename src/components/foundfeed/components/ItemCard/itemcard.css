@@ -1,0 +1,67 @@
+/* ItemCard.css */
+
+.item-card {
+    background-color: #fff;
+    border-radius: 15px;
+    padding: 15px;
+    width: 100%;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .item-card h2 {
+    margin: 0;
+    color: #4c3c91;
+    font-size: 18px;
+  }
+  
+  .item-card p {
+    margin: 0;
+    color: #555;
+    font-size: 14px;
+  }
+  
+  .found-image {
+    width: 100%;
+    border-radius: 10px;
+    height: auto;
+    object-fit: cover;
+  }
+  
+  .item-actions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+  }
+  
+  .claim-button {
+    background-color: #6a4cc3;
+    color: #fff;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 25px;
+    cursor: pointer;
+    font-size: 14px;
+  }
+  
+  .claim-button:hover {
+    background-color: #533a91;
+  }
+  
+  .view-map-button {
+    background-color: #4caf50;
+    color: #fff;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 25px;
+    cursor: pointer;
+    font-size: 14px;
+  }
+  
+  .view-map-button:hover {
+    background-color: #388e3c;
+  }
+  

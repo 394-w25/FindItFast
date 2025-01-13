@@ -1,8 +1,8 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import Login from './components/login';
-import FoundFeed from './components/foundfeed';
-import SignUp from './components/signup';
+import Login from './components/auth/login/login';
+import FoundFeed from './components/foundfeed/foundfeed';
+import SignUp from './components/auth/signup/signup';
 import './App.css';
 
 const App = () => {
