@@ -1,0 +1,23 @@
+.nav-icon {
+    text-align: center;
+    color: gray;
+    text-decoration: none;
+}
+
+.nav-icon p {
+    margin: 0;
+    font-size: 12px;
+}
+
+.nav-icon.active i {
+    color: #6a4cc3;
+}
+
+.nav-icon.active p {
+    color: #6a4cc3;
+}
+
+
+.nav-icon i {
+    font-size: 20px;
+}

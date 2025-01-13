@@ -1,19 +1,29 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import Login from './components/auth/login/login';
-import FoundFeed from './components/foundfeed/foundfeed';
-import SignUp from './components/auth/signup/signup';
+import SignInPage from './pages/SignInPage';
+import MessagesPage from './pages/MessagesPage';
+import FoundFeedPage from './pages/FoundFeedPage';
+import ProfilePage from './pages/ProfilePage';
+import PostItemPage from './pages/PostItemPage';
+import SignUp from './components/auth/signup';
+import NavigationBar from './components/navigation/NavigationBar';
 import './App.css';
 
 const App = () => {
   return (
     <Router>
-      <Routes>
-        <Route path="/" element={<SignUp />} />
-        <Route path="/signup" element={<SignUp />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/found" element={<FoundFeed />} />
-      </Routes>
+      <div className="main-content">
+        <Routes>
+          <Route path="/" element={<SignInPage />} />
+          <Route path="/signin" element={<SignInPage />} />
+          <Route path="/signup" element={<SignUp />} />
+          <Route path="/found" element={<FoundFeedPage />} />
+          <Route path="/messages" element={<MessagesPage />} />
+          <Route path="/profile" element={<ProfilePage />} />
+          <Route path="/postfound" element={<PostItemPage />} />
+        </Routes>
+      </div>
+      <NavigationBar />
     </Router>
   );
 };
