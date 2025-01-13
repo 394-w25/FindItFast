@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { db, storage } from '../firebase';
+import { database as db, storage } from '../utilities/firebase';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import './PostItemPage.css'; // Import CSS here

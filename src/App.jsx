@@ -4,7 +4,7 @@ import SignInPage from './pages/SignInPage';
 import MessagesPage from './pages/MessagesPage';
 import FoundFeedPage from './pages/FoundFeedPage';
 import ProfilePage from './pages/ProfilePage';
-import PostFoundItemPage from './pages/PostFoundItemPage';
+import PostItemPage from './pages/PostItemPage';
 import SignUp from './components/auth/signup';
 import NavigationBar from './components/navigation/NavigationBar';
 import './App.css';
@@ -20,7 +20,7 @@ const App = () => {
           <Route path="/found" element={<FoundFeedPage />} />
           <Route path="/messages" element={<MessagesPage />} />
           <Route path="/profile" element={<ProfilePage />} />
-          <Route path="/postfound" element={<PostFoundItemPage />} />
+          <Route path="/postfound" element={<PostItemPage />} />
         </Routes>
       </div>
       <NavigationBar />
