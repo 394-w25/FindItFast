@@ -1,0 +1,48 @@
+/* HamburgerMenu.css */
+
+.hamburger-menu {
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    z-index: 20;
+  }
+  
+  .hamburger-button {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: #4c3c91;
+  }
+  
+  .menu-dropdown {
+    position: absolute;
+    top: 35px;
+    left: 0;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    width: 150px;
+  }
+  
+  .menu-dropdown ul {
+    list-style: none;
+    padding: 10px;
+    margin: 0;
+  }
+  
+  .menu-dropdown li {
+    margin: 10px 0;
+  }
+  
+  .menu-dropdown a {
+    text-decoration: none;
+    color: #4c3c91;
+    font-weight: bold;
+  }
+  
+  .menu-dropdown a:hover {
+    text-decoration: underline;
+  }
+  
