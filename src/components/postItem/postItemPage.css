@@ -1,47 +1,65 @@
 /* PostItemPage.css */
-
 .post-item-page {
     max-width: 600px;
     margin: 0 auto;
     padding: 20px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    border-radius: 16px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
     font-family: 'Arial', sans-serif;
-    background-color: #f9f9f9;
+    background-color: #F4F0FA; /* Light purple */
+    color: #333;
 }
 
 h2 {
     text-align: center;
-    color: #333;
+    font-size: 24px;
+    font-weight: bold;
+    color: #6A0DAD; /* Purple heading */
 }
 
 form {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 15px;
+    padding: 20px;
 }
 
 input[type="text"], 
-input[type="file"], 
-button {
-    padding: 10px;
-    border-radius: 5px;
-    border: 1px solid #ccc;
+input[type="file"] {
+    padding: 12px;
+    border-radius: 10px;
+    border: 1px solid #D1D1D1;
+    font-size: 16px;
+}
+
+input[type="text"]:focus, 
+input[type="file"]:focus {
+    border: 1px solid #6A0DAD;
+    outline: none;
 }
 
 button {
-    background-color: #4CAF50;
-    color: white;
+    padding: 12px;
+    border-radius: 10px;
     border: none;
+    font-size: 16px;
+    background-color: #6A0DAD; /* Purple button */
+    color: white;
     cursor: pointer;
-    transition: background 0.3s;
+    transition: background 0.3s ease;
+}
+
+button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
 }
 
 button:hover {
-    background-color: #45a049;
+    background-color: #4E0786;
 }
 
-input[type="file"] {
-    cursor: pointer;
+.success-message {
+    color: #4CAF50;
+    text-align: center;
+    font-size: 18px;
 }
