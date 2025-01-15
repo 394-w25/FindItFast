@@ -72,7 +72,7 @@ const FoundFeedPage = () => {
     <div className="found-feed">
       <HamburgerMenu />
       <header className="found-feed-header">
-        <Logo />
+        {/* <Logo /> */}
         <SearchBar onSearch={handleSearch} />
           
         <div className="view-mode-buttons">
