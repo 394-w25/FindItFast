@@ -51,6 +51,7 @@ const PostItemPage = () => {
         }
 
         setLoading(true);
+        setSuccessMessage(''); // Clear previous success message
 
         try {
             const fullAddress = `${street}, ${city}, ${state}, ${zip}`;
@@ -71,6 +72,7 @@ const PostItemPage = () => {
                 ...coordinates,
             });
 
+            setSuccessMessage(`✅ Successfully posted a ${itemType} item!`);
             setSuccessMessage(`✅ Successfully posted a ${itemType} item!`);
             setTitle('');
             setDescription('');
