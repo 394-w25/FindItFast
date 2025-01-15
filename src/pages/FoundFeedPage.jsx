@@ -1,49 +1,43 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import ItemCard from '../components/foundfeed/Itemcard';
 import Modal from '../components/foundfeed/modal';
 import MapView from '../components/foundfeed/mapview';
 import HamburgerMenu from '../components/foundfeed/hamburgermenu';
 import SearchBar from '../components/foundfeed/searchbar';
 import Logo from '../components/foundfeed/logo'; 
+import { useDbData } from '../utilities/firebase';
 import './FoundFeedPage.css';
 
 const FoundFeedPage = () => {
-  const [items, setItems] = useState([
-    {
-      id: 1,
-      title: 'Pikachu Plushie',
-      description: 'Lost yellow pikachu plushie, about 7" tall',
-      image: 'images/pikachu.jpg',
-      timestamp: '2025-01-13T09:00:00Z', // Updated timestamp
-      latitude: 42.05353219296991,
-      longitude: -87.67261584023835,
-
-    },
-    {
-      id: 2,
-      title: 'Airpods',
-      description: 'White case with initials AO on the side. Found in spac',
-      image: 'images/airpods.jpeg',
-      timestamp: '2025-01-13T13:30:00Z', // Updated timestamp
-      latitude: 42.059454450657405,
-      longitude: -87.67212895136183,
-    },
-    {
-      id: 3,
-      title: 'Water Bottle',
-      description: 'Black hydroflask found in Tech LR3 at around 11am Tuesday 1/10',
-      image: 'images/hydroflask.jpg',
-      timestamp: '2025-01-12T11:00:00Z', // Updated timestamp
-      latitude: 42.057546315505526,
-      longitude: -87.67603257548079,
-    },
-    // Add more items as needed
-  ]);
-
+  const [items, setItems] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
   const [viewMode, setViewMode] = useState('list'); // 'list' or 'map'
   const [searchQuery, setSearchQuery] = useState('');
+  const [data, error] = useDbData('foundItems');
+  const [users, setUsers] = useState({});
+  const [userData, userError] = useDbData('users');
+
+  useEffect(() => {
+    if (data) {
+      // Transform data into an array of items
+      const transformedItems = Object.keys(data).map((key) => ({
+        id: key,
+        ...data[key],
+      }));
+      setItems(transformedItems);
+    }
+  }, [data]);
+
+  useEffect(() => {
+    if (userData) {
+      setUsers(userData); // Store user profile data
+    }
+  }, [userData]);
+
+  if (error || userError) {
+    return <div>Error fetching data: {error?.message || userError?.message}</div>;
+  }
 
   const openModal = (item) => {
     setSelectedItem(item);
@@ -70,7 +64,7 @@ const FoundFeedPage = () => {
 
   return (
     <div className="found-feed">
-      <HamburgerMenu />
+      {/* <HamburgerMenu /> */}
       <header className="found-feed-header">
         {/* <Logo /> */}
         <SearchBar onSearch={handleSearch} />
@@ -94,7 +88,7 @@ const FoundFeedPage = () => {
         {viewMode === 'list' ? (
           <div className="item-list">
             {filteredItems.map((item) => (
-              <ItemCard key={item.id} item={item} onViewMap={openModal} />
+              <ItemCard key={item.id} item={item} user={users[item.postedBy]} onViewMap={openModal} />
             ))}
           </div>
         ) : (
