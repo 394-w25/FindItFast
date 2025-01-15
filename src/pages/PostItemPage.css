@@ -38,6 +38,17 @@ button {
     transition: background 0.3s;
 }
 
+.address-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.address-group input {
+    flex: 1;
+    min-width: 150px;
+}
+
 button:hover {
     background-color: #9383c9;
 }
