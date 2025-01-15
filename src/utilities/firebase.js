@@ -146,18 +146,18 @@ export const useDbUpdate = (path) => {
   return [updateData, result];
 };
 
-// // Upload image to Firebase Storage and return the image URL
-// export const uploadImage = async (imageFile) => {
-//   try {
-//     const imageRef = storageRef(storage, `images/${imageFile.name}`);
-//     await uploadBytes(imageRef, imageFile);
-//     const imageUrl = await getDownloadURL(imageRef);
-//     return imageUrl;
-//   } catch (error) {
-//     console.error("Error uploading image:", error);
-//     throw error;
-//   }
-// };
+// Upload image to Firebase Storage and return the image URL
+export const uploadImage = async (imageFile) => {
+  try {
+    const imageRef = storageRef(storage, `images/${imageFile.name}`);
+    await uploadBytes(imageRef, imageFile);
+    const imageUrl = await getDownloadURL(imageRef);
+    return imageUrl;
+  } catch (error) {
+    console.error("Error uploading image:", error);
+    throw error;
+  }
+};
 
 
 

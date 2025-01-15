@@ -1,14 +1,15 @@
 import React, { useState } from 'react';
-import { database as db, storage } from '../utilities/firebase';
-import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
-import './PostItemPage.css'; // Import CSS here
+import { database, storage, useAuthState, uploadImage } from '../utilities/firebase';
+import { ref, set } from 'firebase/database';
+import './PostItemPage.css';
 
 const PostItemPage = () => {
-    const [title, setTitle] = useState(''); // Added state for title
+    const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
     const [image, setImage] = useState(null);
-    const [loading, setLoading] = useState(false); // Added for better UX feedback
+    const [itemType, setItemType] = useState('lost'); // Dropdown for lost or found
+    const [loading, setLoading] = useState(false);
+    const [user] = useAuthState(); 
 
     const handleImageChange = (e) => {
         const file = e.target.files[0];
@@ -20,36 +21,40 @@ const PostItemPage = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        if (loading) return;
-
-        if (!image || !description.trim() || !title.trim()) {
-            alert('Please provide a title, description, and image.');
+        if (!user) {
+            alert("You need to be logged in to post an item.");
             return;
         }
 
-        setLoading(true); 
+        if (!title.trim() || !image || !description.trim()) {
+            alert('Please provide a title, description, and an image.');
+            return;
+        }
+
+        setLoading(true);
 
         try {
-            const imageRef = ref(storage, `images/${Date.now()}_${image.name}`);
-            await uploadBytes(imageRef, image);
-            const imageUrl = await getDownloadURL(imageRef);
+            const imageUrl = await uploadImage(image);
+            const itemId = Date.now().toString();
+            const itemPath = itemType === 'lost' ? 'lostItems' : 'foundItems';
 
-            await addDoc(collection(db, 'items'), {
+            await set(ref(database, `${itemPath}/${itemId}`), {
                 title,
                 description,
                 imageUrl,
-                timestamp: serverTimestamp() 
+                postedBy: user.email,
+                timestamp: new Date().toISOString()
             });
 
             alert('Item posted successfully!');
-            setTitle(''); 
+            setTitle('');
             setDescription('');
-            setImage(null); 
+            setImage(null);
         } catch (error) {
             console.error('Error posting item:', error);
             alert('Failed to post item. Please try again.');
         } finally {
-            setLoading(false); 
+            setLoading(false);
         }
     };
 
@@ -57,6 +62,10 @@ const PostItemPage = () => {
         <div className="post-item-page">
             <h2>Post a Lost/Found Item</h2>
             <form onSubmit={handleSubmit}>
+                <select value={itemType} onChange={(e) => setItemType(e.target.value)}>
+                    <option value="lost">Lost Item</option>
+                    <option value="found">Found Item</option>
+                </select>
                 <input
                     type="text"
                     placeholder="Enter item title"
@@ -64,24 +73,21 @@ const PostItemPage = () => {
                     onChange={(e) => setTitle(e.target.value)}
                     required
                 />
-                
                 <input
                     type="text"
                     placeholder="Enter item description"
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
-                    required 
+                    required
                 />
-
                 <input 
                     type="file" 
                     accept="image/*" 
                     onChange={handleImageChange} 
                     required 
                 />
-
                 <button type="submit" disabled={loading}>
-                    {loading ? "Posting..." : "Post Item"}
+                    {loading ? "Posting..." : `Post ${itemType} Item`}
                 </button>
             </form>
         </div>
