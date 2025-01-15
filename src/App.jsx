@@ -38,8 +38,12 @@ const App = () => {
           <Route path="/" element={<SignInPage />} />
           <Route path="/signin" element={<SignInPage />} />
           <Route path="/signup" element={<SignUp />} />
-          {/* Protected Routes */}
-          <Route
+          <Route path="/found" element={<FoundFeedPage />} />
+          <Route path="/messages" element={<MessagesPage />} />
+          <Route path="/profile" element={<ProfilePage />} />
+          <Route path="/postfound" element={<PostItemPage />} />
+          {/* Protected Routes, commenting this for now because it sends the user back to sign in on refresh */}
+          {/* <Route
             path="/found"
             element={<ProtectedRoute element={<FoundFeedPage />} isAuthenticated={!!user} redirectTo="/signin" />}
           />
@@ -54,7 +58,7 @@ const App = () => {
           <Route
             path="/postfound"
             element={<ProtectedRoute element={<PostItemPage />} isAuthenticated={!!user} redirectTo="/signin" />}
-          />
+          /> */}
         </Routes>
       </div>
       {!noNavRoutes.includes(location.pathname) && <NavigationBar />}
