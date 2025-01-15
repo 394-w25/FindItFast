@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
-import ItemCard from './components/itemcard/Itemcard';
-import Modal from './components/modal/modal';
-import MapView from './components/mapview/mapview';
-import HamburgerMenu from './components/hamburgermenu/hamburgermenu';
-import SearchBar from './components/searchbar/searchbar';
-import './foundfeed.css';
+import ItemCard from '../components/foundfeed/Itemcard';
+import Modal from '../components/foundfeed/modal';
+import MapView from '../components/foundfeed/mapview';
+import HamburgerMenu from '../components/foundfeed/hamburgermenu';
+import SearchBar from '../components/foundfeed/searchbar';
+import Logo from '../components/foundfeed/logo'; 
+import './FoundFeedPage.css';
 
-const FoundFeed = () => {
+const FoundFeedPage = () => {
   const [items, setItems] = useState([
     {
       id: 1,
@@ -71,7 +72,9 @@ const FoundFeed = () => {
     <div className="found-feed">
       <HamburgerMenu />
       <header className="found-feed-header">
+        <Logo />
         <SearchBar onSearch={handleSearch} />
+          
         <div className="view-mode-buttons">
           <button
             className={`view-button ${viewMode === 'list' ? 'active' : ''}`}
@@ -111,4 +114,4 @@ const FoundFeed = () => {
   );
 };
 
-export default FoundFeed;
+export default FoundFeedPage;

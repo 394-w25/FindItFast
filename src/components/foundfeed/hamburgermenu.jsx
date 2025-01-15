@@ -17,7 +17,7 @@ const HamburgerMenu = () => {
         <div className="menu-dropdown" onClick={() => setIsOpen(false)}>
           <ul>
             <li><a href="/found">Found Items</a></li>
-            <li><a href="/login">Log Out</a></li>
+            <li><a href="/signin">Log Out</a></li>
             {/* Add more menu items as needed */}
           </ul>
         </div>
