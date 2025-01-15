@@ -10,6 +10,7 @@ const PostItemPage = () => {
     const [itemType, setItemType] = useState('lost'); // Dropdown for lost or found
     const [loading, setLoading] = useState(false);
     const [user] = useAuthState(); 
+    const [successMessage, setSuccessMessage] = useState(''); // New success message state
 
     const handleImageChange = (e) => {
         const file = e.target.files[0];
@@ -32,6 +33,7 @@ const PostItemPage = () => {
         }
 
         setLoading(true);
+        setSuccessMessage(''); // Clear previous success message
 
         try {
             const imageUrl = await uploadImage(image);
@@ -46,7 +48,7 @@ const PostItemPage = () => {
                 timestamp: new Date().toISOString()
             });
 
-            alert('Item posted successfully!');
+            setSuccessMessage(`✅ Successfully posted a ${itemType} item!`);
             setTitle('');
             setDescription('');
             setImage(null);
@@ -61,6 +63,7 @@ const PostItemPage = () => {
     return (
         <div className="post-item-page">
             <h2>Post a Lost/Found Item</h2>
+            {successMessage && <p className="success-message">{successMessage}</p>} {/* Success message display */}
             <form onSubmit={handleSubmit}>
                 <select value={itemType} onChange={(e) => setItemType(e.target.value)}>
                     <option value="lost">Lost Item</option>
