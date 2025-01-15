@@ -5,9 +5,10 @@ import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import './PostItemPage.css'; // Import CSS here
 
 const PostItemPage = () => {
+    const [title, setTitle] = useState(''); // Added state for title
     const [description, setDescription] = useState('');
     const [image, setImage] = useState(null);
-    const [loading, setLoading] = useState(false);  // Added for better UX feedback
+    const [loading, setLoading] = useState(false); // Added for better UX feedback
 
     const handleImageChange = (e) => {
         const file = e.target.files[0];
@@ -18,38 +19,37 @@ const PostItemPage = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        
-        // Prevent double submission
+
         if (loading) return;
 
-        if (!image || !description.trim()) {
-            alert('Please provide both an image and description.');
+        if (!image || !description.trim() || !title.trim()) {
+            alert('Please provide a title, description, and image.');
             return;
         }
 
-        setLoading(true);  // Show loading state while submitting
+        setLoading(true); 
 
         try {
-            // Upload image to Firebase Storage
             const imageRef = ref(storage, `images/${Date.now()}_${image.name}`);
             await uploadBytes(imageRef, image);
             const imageUrl = await getDownloadURL(imageRef);
 
-            // Store data in Firestore
             await addDoc(collection(db, 'items'), {
+                title,
                 description,
                 imageUrl,
-                timestamp: serverTimestamp() // Firebase server timestamp for consistency
+                timestamp: serverTimestamp() 
             });
 
             alert('Item posted successfully!');
+            setTitle(''); 
             setDescription('');
-            setImage(null);
+            setImage(null); 
         } catch (error) {
             console.error('Error posting item:', error);
             alert('Failed to post item. Please try again.');
         } finally {
-            setLoading(false);  // Reset loading state
+            setLoading(false); 
         }
     };
 
@@ -59,13 +59,27 @@ const PostItemPage = () => {
             <form onSubmit={handleSubmit}>
                 <input
                     type="text"
+                    placeholder="Enter item title"
+                    value={title}
+                    onChange={(e) => setTitle(e.target.value)}
+                    required
+                />
+                
+                <input
+                    type="text"
                     placeholder="Enter item description"
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
+                    required 
                 />
-                <input type="file" accept="image/*" onChange={handleImageChange} />
-                
-                {/* Disable button during upload for better UX */}
+
+                <input 
+                    type="file" 
+                    accept="image/*" 
+                    onChange={handleImageChange} 
+                    required 
+                />
+
                 <button type="submit" disabled={loading}>
                     {loading ? "Posting..." : "Post Item"}
                 </button>

@@ -4,6 +4,7 @@ import Modal from '../components/foundfeed/modal';
 import MapView from '../components/foundfeed/mapview';
 import HamburgerMenu from '../components/foundfeed/hamburgermenu';
 import SearchBar from '../components/foundfeed/searchbar';
+import Logo from '../components/foundfeed/logo'; 
 import './FoundFeedPage.css';
 
 const FoundFeedPage = () => {
@@ -71,7 +72,9 @@ const FoundFeedPage = () => {
     <div className="found-feed">
       <HamburgerMenu />
       <header className="found-feed-header">
+        <Logo />
         <SearchBar onSearch={handleSearch} />
+          
         <div className="view-mode-buttons">
           <button
             className={`view-button ${viewMode === 'list' ? 'active' : ''}`}
