@@ -61,3 +61,16 @@
     margin-top: 0px;
     margin-bottom: 0px;
 }
+
+.google-button {
+    background-color: #4285f4;
+    color: #fff;
+    margin-top: 15px;
+    padding-left: 70px;
+    padding-right: 70px;
+    margin-bottom: 10px;
+}
+
+.google-button:hover {
+    background-color: #357ae8;
+}
