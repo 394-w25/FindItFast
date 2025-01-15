@@ -73,7 +73,6 @@ const PostItemPage = () => {
             });
 
             setSuccessMessage(`✅ Successfully posted a ${itemType} item!`);
-            setSuccessMessage(`✅ Successfully posted a ${itemType} item!`);
             setTitle('');
             setDescription('');
             setImage(null);
