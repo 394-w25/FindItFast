@@ -2,13 +2,12 @@ import React, { useState, useEffect } from 'react';
 import ItemCard from '../components/foundfeed/Itemcard';
 import Modal from '../components/foundfeed/modal';
 import MapView from '../components/foundfeed/mapview';
-import HamburgerMenu from '../components/foundfeed/hamburgermenu';
 import SearchBar from '../components/foundfeed/searchbar';
-import Logo from '../components/foundfeed/logo'; 
 import { useDbData } from '../utilities/firebase';
+import { useNavigate } from 'react-router-dom';
 import './FoundFeedPage.css';
 
-const FoundFeedPage = () => {
+const FoundFeedPage = ({ currentUser }) => {
   const [items, setItems] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
@@ -17,10 +16,10 @@ const FoundFeedPage = () => {
   const [data, error] = useDbData('foundItems');
   const [users, setUsers] = useState({});
   const [userData, userError] = useDbData('users');
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (data) {
-      // Transform data into an array of items
       const transformedItems = Object.keys(data).map((key) => ({
         id: key,
         ...data[key],
@@ -57,18 +56,26 @@ const FoundFeedPage = () => {
     setSearchQuery(query.toLowerCase());
   };
 
-  const filteredItems = items.filter(item =>
+  const handleClaim = (item) => {
+    const posterId = item.postedBy; // Assuming `postedBy` contains the ID of the user who posted the item.
+    if (posterId && posterId !== currentUser.uid) {
+        const conversationId = [currentUser.uid, posterId].sort().join('_'); // Generate unique conversation ID.
+        navigate(`/messages/${conversationId}`); // Navigate to the messaging page with the parameter.
+    } else {
+        alert("You can't claim your own item!");
+    }
+};
+
+
+  const filteredItems = items.filter((item) =>
     item.title.toLowerCase().includes(searchQuery) ||
     item.description.toLowerCase().includes(searchQuery)
   );
 
   return (
     <div className="found-feed">
-      {/* <HamburgerMenu /> */}
       <header className="found-feed-header">
-        {/* <Logo /> */}
         <SearchBar onSearch={handleSearch} />
-          
         <div className="view-mode-buttons">
           <button
             className={`view-button ${viewMode === 'list' ? 'active' : ''}`}
@@ -88,7 +95,13 @@ const FoundFeedPage = () => {
         {viewMode === 'list' ? (
           <div className="item-list">
             {filteredItems.map((item) => (
-              <ItemCard key={item.id} item={item} user={users[item.postedBy]} onViewMap={openModal} />
+              <ItemCard
+                key={item.id}
+                item={item}
+                user={users[item.postedBy]}
+                onViewMap={openModal}
+                onClaim={handleClaim} // Pass handleClaim to ItemCard.
+              />
             ))}
           </div>
         ) : (

@@ -1,7 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes, Navigate, useLocation } from 'react-router-dom';
 import SignInPage from './pages/SignInPage';
-import MessagesPage from './pages/MessagesPage';
+import MessagingApp from './pages/MessagesPage';
 import FoundFeedPage from './pages/FoundFeedPage';
 import ProfilePage from './pages/ProfilePage';
 import PostItemPage from './pages/PostItemPage';
@@ -38,8 +38,9 @@ const App = () => {
           <Route path="/" element={<SignInPage />} />
           <Route path="/signin" element={<SignInPage />} />
           <Route path="/signup" element={<SignUp />} />
-          <Route path="/found" element={<FoundFeedPage />} />
-          <Route path="/messages" element={<MessagesPage />} />
+          <Route path="/found" element={<FoundFeedPage currentUser={user} />} />
+          <Route path="/messages" element={<MessagingApp user={user} />} />
+          <Route path="/messages/:conversationId" element={<MessagingApp user={user} />} />
           <Route path="/profile" element={<ProfilePage />} />
           <Route path="/postfound" element={<PostItemPage />} />
           {/* Protected Routes, commenting this for now because it sends the user back to sign in on refresh */}

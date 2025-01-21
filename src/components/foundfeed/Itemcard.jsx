@@ -4,9 +4,13 @@ import { formatDistanceToNow } from 'date-fns';
 import { FaMapMarkedAlt } from 'react-icons/fa'; // Importing map icon from react-icons
 import { PersonCircle } from 'react-bootstrap-icons';
 
-const ItemCard = ({ item, user, onViewMap }) => {
+const ItemCard = ({ item, user, onViewMap, onClaim }) => {
   const handleViewMap = () => {
     onViewMap(item);
+  };
+
+  const handleClaim = () => {
+    onClaim(item); // Call the onClaim function passed from the parent component
   };
 
   // Calculate "found X hours ago"
@@ -34,7 +38,7 @@ const ItemCard = ({ item, user, onViewMap }) => {
       </div>
       <p>{item.description}</p>
       <div className="item-actions">
-        <button className="claim-button">Claim</button>
+        <button className="claim-button" onClick={handleClaim}>Claim</button>
         <button className="view-map-button" onClick={handleViewMap}>
           <FaMapMarkedAlt className="map-icon" /> View in Map
         </button>

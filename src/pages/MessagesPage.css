@@ -1,4 +1,73 @@
-.messages {
-    text-align: center;
+.messages-page {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
     padding: 20px;
+    background-color: #f9f9f9;
+}
+
+.messages-list {
+    flex: 1;
+    overflow-y: scroll;
+    margin-bottom: 10px;
+    padding: 5px;
+}
+
+.message {
+    margin: 10px 0;
+    padding: 15px;
+    border-radius: 10px;
+    max-width: 70%;
+    word-wrap: break-word;
+}
+
+.sent {
+    background-color: #caf0f8;
+    align-self: flex-end;
+}
+
+.received {
+    background-color: #fce1e4;
+    align-self: flex-start;
+}
+
+.message-input {
+    display: flex;
+    gap: 10px;
+}
+
+.message-input input {
+    flex: 1;
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid #bbb;
+    font-size: 14px;
+}
+
+.message-input button {
+    padding: 12px;
+    border: none;
+    background-color: #007bff;
+    color: white;
+    border-radius: 8px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.message-input button:hover {
+    background-color: #0056b3;
+}
+
+.messages-list p {
+    text-align: left;
+    color: #333;
+    font-style: normal;
+}
+
+.no-messages {
+    text-align: center;
+    color: #aaa;
+    font-size: 16px;
+    margin-top: 20px;
 }
