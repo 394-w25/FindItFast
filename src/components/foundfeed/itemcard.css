@@ -29,7 +29,14 @@
     height: 40px;
     border-radius: 50%;
     object-fit: cover;
-  }  
+  } 
+  
+  .profile {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
 
   .display-name {
     font-weight: bold;
@@ -53,11 +60,12 @@
     display: flex;
     justify-content: center; /* Center the image horizontally */
     align-items: center;    /* Center the image vertically if needed */
+    /* height: 100%; */
   }
   
   .found-image {
     width: 100%;
-    max-width: 250px; /* Optional: Limit the image size */
+    width: 400px;
     border-radius: 10px;
     height: auto;
     object-fit: cover;

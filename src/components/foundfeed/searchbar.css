@@ -1,14 +1,14 @@
 .search-bar-card {
-  padding-left: 5%;
   background-color: #fff;
   padding: 10px 15px;
   border-radius: 20px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   width: 100%;
-  max-width: 300px;
+  max-width: 600px;
   display: flex;
   justify-content: center;
   align-items: center;
+  margin: 0 auto; /* Center the card horizontally */
 }
 
 .search-form {
@@ -44,20 +44,4 @@
 
 .search-button:hover {
   background-color: #8f7ec3;
-}
-
-/* Make it responsive on smaller screens */
-@media screen and (max-width: 480px) {
-  .search-bar-card {
-    padding: 10px;
-    max-width: 200px;
-  }
-
-  .search-input {
-    font-size: 12px;
-  }
-
-  .search-button {
-    padding: 6px 10px;
-  }
 }

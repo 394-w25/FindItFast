@@ -16,14 +16,15 @@ const ItemCard = ({ item, user, onViewMap }) => {
     <div className="item-card">
       <div className="item-header">
         {user?.photoURL ? (
+          <div className='profile-icon'>
             <img
               src={user.photoURL}
-              alt={user.displayName || 'User'}
               className="profile-icon"
             />
-          ) : (
-            <PersonCircle className="profile-icon" />
-          )}
+          </div>
+        ) : (
+          <PersonCircle className="profile-icon" />
+        )}
         <p className="display-name">{user?.displayName || 'Anonymous'}</p>
       </div>
       <h2>{item.title}</h2>
