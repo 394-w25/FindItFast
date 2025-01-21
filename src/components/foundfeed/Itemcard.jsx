@@ -20,11 +20,12 @@ const ItemCard = ({ item, user, onViewMap, onClaim }) => {
     <div className="item-card">
       <div className="item-header">
         {user?.photoURL ? (
-          <img
-            src={user.photoURL}
-            alt={user.displayName || 'User'}
-            className="profile-icon"
-          />
+          <div className='profile-icon'>
+            <img
+              src={user.photoURL}
+              className="profile-icon"
+            />
+          </div>
         ) : (
           <PersonCircle className="profile-icon" />
         )}
