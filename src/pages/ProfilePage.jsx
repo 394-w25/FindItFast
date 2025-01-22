@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { auth, database, signOut, useAuthState, useDbData, useDbUpdate } from '../utilities/firebase';
+import { signOut, useAuthState, useDbData, useDbUpdate } from '../utilities/firebase';
+import { useNavigate } from 'react-router-dom';
 import { Container, Row, Col, Button, Form, Tabs, Tab, Card } from 'react-bootstrap';
 import ItemCard from '../components/foundfeed/Itemcard';
 import Modal from '../components/foundfeed/modal';
@@ -8,6 +9,7 @@ import { PersonCircle } from 'react-bootstrap-icons';
 import './ProfilePage.css';
 
 const ProfilePage = () => {
+  const navigate = useNavigate();
   const [user] = useAuthState();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
@@ -45,6 +47,7 @@ const ProfilePage = () => {
 
   const handleSignOut = () => {
     signOut();
+    navigate('/');
   };
 
   const openModal = (item) => {

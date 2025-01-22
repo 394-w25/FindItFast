@@ -13,9 +13,9 @@
     padding: 15px;
     background-color: #eae7f5;
     border-bottom: 1px solid #ddd;
-    position: sticky;
+    /* position: sticky; */
     top: 0;
-    z-index: 10;
+    /* z-index: 10; */
   }
   
   .view-mode-buttons {

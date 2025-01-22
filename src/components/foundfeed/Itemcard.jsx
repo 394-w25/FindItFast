@@ -4,8 +4,11 @@ import { formatDistanceToNow } from 'date-fns';
 import { FaMapMarkedAlt } from 'react-icons/fa'; // Importing map icon from react-icons
 import { PersonCircle } from 'react-bootstrap-icons';
 import { Card } from 'react-bootstrap';
+import { useAuthState } from '../../utilities/firebase';
 
 const ItemCard = ({ item, user, onViewMap, onClaim = {}, showClaimButton = true }) => {
+  const [currUser] = useAuthState(); 
+
   const handleViewMap = () => {
     onViewMap(item);
   };
@@ -16,6 +19,9 @@ const ItemCard = ({ item, user, onViewMap, onClaim = {}, showClaimButton = true 
 
   // Calculate "found X hours ago"
   const foundTimeAgo = formatDistanceToNow(new Date(item.timestamp), { addSuffix: true });
+
+  // console.log('currUser:', user);
+  const isOwner = currUser?.uid === item.postedBy;
 
   return (
 
@@ -38,7 +44,7 @@ const ItemCard = ({ item, user, onViewMap, onClaim = {}, showClaimButton = true 
       </Card.Body>
 
       <Card.Footer className="item-actions">
-        {showClaimButton && (
+        {showClaimButton && !isOwner && (
           <button className="claim-button" onClick={handleClaim}>
             Claim
           </button>
