@@ -29,9 +29,32 @@ const storage = getStorage(firebase);  // Storage
 // Export services for use in other files
 export { auth, database, storage };
 
-export const signInWithGoogle = async() => {
-  const result = await signInWithPopup(auth, new GoogleAuthProvider());
-  return result;
+// export const signInWithGoogle = async() => {
+//   const result = await signInWithPopup(auth, new GoogleAuthProvider());
+//   return result;
+// };
+
+export const signInWithGoogle = async () => {
+  const provider = new GoogleAuthProvider();
+  try {
+    const result = await signInWithPopup(auth, provider);
+    const user = result.user;
+
+    // Check if the email is from Northwestern
+    const emailDomain = user.email.split('@')[1];
+    if (
+      emailDomain !== 'northwestern.edu' &&
+      emailDomain !== 'u.northwestern.edu'
+    ) {
+      throw new Error('Please use a Northwestern University email to sign in.');
+    }
+
+    // Continue with the authenticated user
+    return user;
+  } catch (error) {
+    console.error('Google sign-in failed:', error.message);
+    throw error;
+  }
 };
 
 export const signOut = () => firebaseSignOut(auth);
