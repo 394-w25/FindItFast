@@ -1,51 +1,47 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { database, useAuthState, uploadImage } from '../utilities/firebase';
-import { ref, set } from 'firebase/database';
+import { get, ref, set } from 'firebase/database';
 import Webcam from 'react-webcam';
-import { FaMapMarkerAlt, FaAddressCard, FaCamera, FaUpload, FaPaperPlane } from 'react-icons/fa'; // Importar icono adicional
+import { FaMapMarkerAlt, FaAddressCard, FaCamera, FaUpload, FaPaperPlane } from 'react-icons/fa';
 import './PostItemPage.css';
 
 const GEOCODING_API_URL = 'https://maps.googleapis.com/maps/api/geocode/json';
-const GEOCODING_API_KEY = 'AIzaSyB-d-ZlP2wvYgNwH7aTBNr3TKkx3J7UDBg'; // Asegúrate de mantener esta clave segura
+const GEOCODING_API_KEY = 'AIzaSyB-d-ZlP2wvYgNwH7aTBNr3TKkx3J7UDBg';
 
 const PostItemPage = () => {
-    // Estados para el formulario
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
     const [image, setImage] = useState(null);
-    const [itemType, setItemType] = useState('lost'); // Dropdown para perdido o encontrado
-    const [useCurrentLocation, setUseCurrentLocation] = useState(true); // Opción por defecto
+    const [itemType, setItemType] = useState('lost');
+    const [useCurrentLocation, setUseCurrentLocation] = useState(true);
     const [street, setStreet] = useState('');
     const [city, setCity] = useState('');
-    const [stateAddr, setStateAddr] = useState(''); // Renombrado para evitar conflicto con React state
+    const [stateAddr, setStateAddr] = useState('');
     const [zip, setZip] = useState('');
     const [loading, setLoading] = useState(false);
     const [user] = useAuthState();
-    const [successMessage, setSuccessMessage] = useState(''); // Mensaje de éxito
-    const [errorMessage, setErrorMessage] = useState(''); // Mensaje de error
+    const [successMessage, setSuccessMessage] = useState('');
+    const [errorMessage, setErrorMessage] = useState('');
 
-    // Estados para la funcionalidad de la cámara
     const [isCameraOpen, setIsCameraOpen] = useState(false);
     const [capturedImage, setCapturedImage] = useState(null);
     const webcamRef = useRef(null);
     const [cameraError, setCameraError] = useState('');
 
-    // Maneja el cambio de imagen desde el navegador de archivos
     const handleImageChange = (e) => {
         const file = e.target.files[0];
         if (file) {
             setImage(file);
-            setCapturedImage(null); // Reinicia la imagen capturada si existe
-            console.log("Imagen seleccionada:", file);
+            setCapturedImage(null);
+            // console.log("Imagen seleccionada:", file);
         }
     };
 
-    // Obtiene las coordenadas usando la API de Geocoding de Google
     const fetchCoordinates = async (address) => {
-        console.log("Obteniendo coordenadas para:", address);
+        // console.log("Obteniendo coordenadas para:", address);
         const response = await fetch(`${GEOCODING_API_URL}?address=${encodeURIComponent(address)}&key=${GEOCODING_API_KEY}`);
         const data = await response.json();
-        console.log("Respuesta de Geocoding:", data);
+        // console.log("Respuesta de Geocoding:", data);
         if (data.status === 'OK' && data.results.length > 0) {
             const { lat, lng } = data.results[0].geometry.location;
             return { latitude: lat, longitude: lng };
@@ -54,7 +50,6 @@ const PostItemPage = () => {
         }
     };
 
-    // Obtiene la ubicación actual del usuario usando la API de Geolocalización
     const getCurrentLocation = () => {
         return new Promise((resolve, reject) => {
             if (!navigator.geolocation) {
@@ -62,14 +57,14 @@ const PostItemPage = () => {
             } else {
                 navigator.geolocation.getCurrentPosition(
                     (position) => {
-                        console.log("Ubicación obtenida:", position.coords);
+                        // console.log("Ubicación obtenida:", position.coords);
                         resolve({
                             latitude: position.coords.latitude,
                             longitude: position.coords.longitude,
                         });
                     },
                     (error) => {
-                        console.error("Error obteniendo ubicación:", error);
+                        // console.error("Error obteniendo ubicación:", error);
                         reject(new Error('Unable to retrieve your location.'));
                     }
                 );
@@ -77,17 +72,14 @@ const PostItemPage = () => {
         });
     };
 
-    // Maneja el envío del formulario
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        // Verifica si el usuario está autenticado
         if (!user) {
             alert("You need to be logged in to post an item.");
             return;
         }
 
-        // Validaciones básicas del formulario
         if ((!image && !capturedImage) || !title.trim() || !description.trim()) {
             alert('Please provide a title, description, and an image.');
             return;
@@ -101,7 +93,7 @@ const PostItemPage = () => {
         }
 
         setLoading(true);
-        setSuccessMessage(''); // Limpia mensajes anteriores
+        setSuccessMessage('');
         setErrorMessage('');
 
         try {
@@ -109,32 +101,24 @@ const PostItemPage = () => {
             let fullAddress = '';
 
             if (useCurrentLocation) {
-                // Obtiene las coordenadas usando la API de Geolocalización
                 coordinates = await getCurrentLocation();
                 fullAddress = 'Current Location';
             } else {
-                // Construye la dirección completa desde los campos de entrada
                 fullAddress = `${street}, ${city}, ${stateAddr}, ${zip}`;
-                // Obtiene las coordenadas usando la API de Geocoding
                 coordinates = await fetchCoordinates(fullAddress);
             }
 
-            // Maneja la subida de la imagen
             let imageUrl = '';
             if (capturedImage) {
-                // Convierte la Data URL capturada a un objeto Blob
                 const blob = dataURLtoBlob(capturedImage);
                 if (!blob) {
                     throw new Error('No se pudo convertir la imagen capturada a Blob.');
                 }
-                // Crea un archivo a partir del Blob
                 const file = new File([blob], 'captured_image.jpg', { type: blob.type });
-                console.log("Subiendo imagen capturada:", file);
-                // Sube la imagen y obtiene la URL
+                // console.log("Subiendo imagen capturada:", file);
                 imageUrl = await uploadImage(file);
             } else if (image) {
-                console.log("Subiendo imagen seleccionada:", image);
-                // Sube la imagen seleccionada y obtiene la URL
+                // console.log("Subiendo imagen seleccionada:", image);
                 imageUrl = await uploadImage(image);
             }
 
@@ -152,6 +136,13 @@ const PostItemPage = () => {
                 location: fullAddress,
                 ...coordinates,
             });
+
+            // Update the user's foundItems list
+            const userRef = ref(database, `users/${user.uid}/foundItems`);
+            const userSnapshot = await get(userRef);
+            const currentFoundItems = userSnapshot.val() || [];
+
+            await set(userRef, [...currentFoundItems, itemId]);
 
             setSuccessMessage(`✅ Successfully posted a ${itemType} item!`);
             console.log("Ítem publicado exitosamente:", itemId);

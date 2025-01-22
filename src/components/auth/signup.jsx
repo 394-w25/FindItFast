@@ -28,7 +28,10 @@ const SignUp = () => {
                 {
                     displayName: username,
                     email: userCredential.email,
-                    photoURL: ""
+                    photoURL: "",
+                    claimedItems: [],
+                    foundItems: [],
+                    about: ''
                 }
             };
             await(update(userData));
