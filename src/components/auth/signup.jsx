@@ -14,8 +14,18 @@ const SignUp = () => {
 
     const handleSignUp = async (e) => {
         e.preventDefault();
+        if (username.length > 10) {
+            setError("Username must be less than 10 characters long.");
+        }
+        if (username.includes(' ')) {
+            setError("Username cannot contain spaces.");
+        }
+        if (!email.endsWith("@u.northwestern.edu")) {
+            setError("Please use a Northwestern email.");
+            return;
+        }
         if (password !== confirmPassword) {
-            setError('Passwords do not match');
+            setError('Passwords do not match.');
             return;
         }
         try {
@@ -38,6 +48,10 @@ const SignUp = () => {
 
             navigate('/found');
         } catch (err) {
+            if (err.code === "auth/email-already-in-use") {
+                setError("This email is already in use. Please sign in."); 
+                return;
+            }
             setError(err.message);
         }
     };
@@ -49,14 +63,10 @@ const SignUp = () => {
                 <input
                     type="text"
                     placeholder="Username"
+                    className="auth-input"
                     required
                     value={username}
-                    onChange={(e) => {
-                        const value = e.target.value;
-                        if (value.length <= 10 && !value.includes(' ')) {
-                            setUsername(value);
-                        }
-                    }}  
+                    onChange={(e) => setUsername(e.target.value)}  
                 />
                 <input
                     type="email"
