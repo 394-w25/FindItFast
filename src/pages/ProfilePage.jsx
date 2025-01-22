@@ -1,12 +1,161 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { auth, database, signOut, useAuthState, useDbData, useDbUpdate } from '../utilities/firebase';
+import { Container, Row, Col, Button, Form, Tabs, Tab, Card } from 'react-bootstrap';
+import ItemCard from '../components/foundfeed/Itemcard';
+import Modal from '../components/foundfeed/modal';
+import MapView from '../components/foundfeed/mapview';
+import { PersonCircle } from 'react-bootstrap-icons';
 import './ProfilePage.css';
 
 const ProfilePage = () => {
+  const [user] = useAuthState();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedItem, setSelectedItem] = useState(null);
+  const [about, setAbout] = useState('');
+  const [isEditingAbout, setIsEditingAbout] = useState(false);
+  const [updateUserData] = useDbUpdate(`users/${user?.uid}`);
+  const [claimedItemsKeys, claimedError] = useDbData(`users/${user?.uid}/claimedItems`);
+  const [foundItemsKeys, foundError] = useDbData(`users/${user?.uid}/foundItems`);
+  const [dbUserData, dbUserDataError] = useDbData(`users/${user?.uid}`);
+  const [allFoundItems, foundItemsError] = useDbData(`foundItems`);
+  const [allClaimedItems, claimedItemsError] = useDbData(`claimedItems`);
+  const [allUsers, usersError] = useDbData(`users`);
+
+  const getItemsFromKeys = (itemKeys, itemsCollection) => {
+    if (!itemKeys || !itemsCollection) return [];
+    return itemKeys
+      .map((id) => ({ id, ...itemsCollection[id] }))
+      .filter((item) => item)
+      .reverse();
+  };
+
+  const claimedItems = getItemsFromKeys(claimedItemsKeys, allClaimedItems);
+  const foundItems = getItemsFromKeys(foundItemsKeys, allFoundItems);
+
+  const handleSaveAbout = async () => {
+    try {
+      await updateUserData({ about });
+      setIsEditingAbout(false);
+      alert('About section updated successfully.');
+    } catch (error) {
+      console.error('Failed to update about:', error);
+      alert('Failed to update the about section. Please try again.');
+    }
+  };
+
+  const handleSignOut = () => {
+    signOut();
+  };
+
+  const openModal = (item) => {
+    setSelectedItem(item);
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setSelectedItem(null);
+    setIsModalOpen(false);
+  };
+
   return (
-    <div className="profile">
-      <h1>Profile Page</h1>
-      <p>Manage your account and view your posts here.</p>
-    </div>
+    <Container className="profile-page">
+      <Row className="justify-content-center">
+        <Col xs={12} md={8} className="text-center">
+          {user?.photoURL ? (
+            <img
+              src={user?.photoURL}
+              className="profile-picture"
+            />
+          ) : (
+            <PersonCircle className="profile-picture" />
+          )}
+          <h3>{user?.displayName || 'Anonymous'}</h3>
+          <p>{user?.email}</p>
+          <div className="about-section">
+            {isEditingAbout ? (
+              <>
+                <Form.Control
+                  as="textarea"
+                  rows={2}
+                  value={about}
+                  onChange={(e) => setAbout(e.target.value)}
+                />
+                <div className="about-buttons">
+                  <Button variant="primary" onClick={handleSaveAbout}>
+                    Save
+                  </Button>
+                  <Button variant="secondary" onClick={() => setIsEditingAbout(false)}>
+                    Cancel
+                  </Button>
+                </div>
+              </>
+            ) : (
+              <>
+                <p>{dbUserData?.about || about || 'Add details about yourself.'}</p>
+                <Button variant="link" onClick={() => setIsEditingAbout(true)}>
+                  Edit About
+                </Button>
+              </>
+            )}
+          </div>
+          <Button variant="danger" onClick={handleSignOut}>
+            Sign Out
+          </Button>
+        </Col>
+      </Row>
+
+      <Row>
+        <Col>
+          <Tabs defaultActiveKey="claimed" className="mt-4">
+            <Tab eventKey="claimed" title="Your Claimed Items">
+              <div className="items-tab">
+                {claimedError && <p>Error loading claimed items: {claimedError.message}</p>}
+                {claimedItems.length > 0 ? (
+                  claimedItems.map((item) => (
+                    <ItemCard
+                      key={item.id}
+                      item={item}
+                      user={allUsers?.[item.postedBy]}
+                      onViewMap={openModal}
+                      showClaimButton={false}
+                    />
+                  ))
+                ) : (
+                  <p>No claimed items yet.</p>
+                )}
+              </div>
+            </Tab>
+            <Tab eventKey="found" title="Found Items">
+              <div className="items-tab">
+                {foundError && <p>Error loading found items: {foundError.message}</p>}
+                {foundItems.length > 0 ? (
+                  foundItems.map((item) => (
+                    <ItemCard
+                      key={item.id}
+                      item={item}
+                      user={allUsers?.[item.postedBy]}
+                      onViewMap={openModal}
+                      showClaimButton={false}
+                    />
+                  ))
+                ) : (
+                  <p>No found items yet.</p>
+                )}
+              </div>
+            </Tab>
+          </Tabs>
+        </Col>
+      </Row>
+      {isModalOpen && selectedItem && (
+        <Modal onClose={closeModal}>
+          <MapView
+            items={[selectedItem]}
+            center={[selectedItem.latitude, selectedItem.longitude]}
+            zoom={15}
+          />
+        </Modal>
+      )}
+    </Container>
   );
 };
 

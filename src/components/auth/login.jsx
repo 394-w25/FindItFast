@@ -33,7 +33,10 @@ const Login = () => {
                 {
                     displayName: result.user.displayName,
                     email: result.user.email,
-                    photoURL: result.user.photoURL
+                    photoURL: result.user.photoURL,
+                    claimedItems: [],
+                    foundItems: [],
+                    about: ''
                 }
             };
             await(update(userData));
