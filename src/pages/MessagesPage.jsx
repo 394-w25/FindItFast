@@ -58,16 +58,23 @@ const MessagingApp = ({ user }) => {
     }, [conversationId]);
 
     const sendMessage = async () => {
-        if (!newMessage.trim() || !conversationId) return;
-        const messagesRef = ref(database, `messages/${conversationId}`);
-        const message = {
-            senderId: user.uid,
-            content: newMessage,
-            timestamp: new Date().toISOString(),
-        };
-        await push(messagesRef, message);
-        setNewMessage('');
-    };
+      if (!newMessage.trim() || !conversationId) return;
+  
+      // Extract the other participant's ID from the conversationId
+      const [id1, id2] = conversationId.split('_');
+      const receiverId = id1 === user.uid ? id2 : id1;
+  
+      const messagesRef = ref(database, `messages/${conversationId}`);
+      const message = {
+          senderId: user.uid,
+          receiverId, // Add the receiverId
+          content: newMessage,
+          timestamp: new Date().toISOString(),
+      };
+      await push(messagesRef, message);
+      setNewMessage('');
+  };
+  
 
     const renderView = () => {
         if (loading) {
@@ -75,43 +82,66 @@ const MessagingApp = ({ user }) => {
         }
 
         if (!conversationId) {
-            return (
-                <Container>
-                    <h2>Your Conversations</h2>
-                    <ListGroup>
-                        {conversations.map(([id, messages]) => {
-                            const lastMessage = Object.values(messages).pop();
-                            const otherParticipantId =
-                                lastMessage?.receiverId === user.uid
-                                    ? lastMessage.senderId
-                                    : lastMessage?.receiverId;
-
-                            const otherParticipant = users.find((u) => u.uid === otherParticipantId);
-                            const otherDisplayName = otherParticipant ? otherParticipant.displayName : 'Unknown';
-
-                            return (
-                                <ListGroup.Item
-                                    key={id}
-                                    action
-                                    onClick={() => navigate(`/messages/${id}`)}
-                                >
-                                    <Row>
-                                        <Col>
-                                            Conversation with {otherDisplayName}
-                                            <br />
-                                            <small>Last Message: {lastMessage.content}</small>
-                                        </Col>
-                                    </Row>
-                                </ListGroup.Item>
-                            );
-                        })}
-                    </ListGroup>
-                    <Button variant="secondary" className="mt-3" onClick={() => navigate('/found')}>
-                        Start New Conversation
-                    </Button>
-                </Container>
-            );
-        }
+          console.log("Rendering conversation list view...");
+      
+          return (
+              <Container>
+                  <h2>Your Conversations</h2>
+                  <ListGroup>
+                      {conversations.map(([id, messages]) => {
+                          const lastMessage = Object.values(messages || {}).pop() || {};
+                          
+                          // Debugging the last message data
+                          console.log("Conversation ID:", id);
+                          console.log("Last Message:", lastMessage);
+      
+                          const otherParticipantId =
+                              lastMessage?.receiverId === user.uid
+                                  ? lastMessage.senderId
+                                  : lastMessage?.receiverId;
+      
+                          // Debugging the other participant ID
+                          console.log("Other Participant ID:", otherParticipantId);
+      
+                          const otherParticipant = users.find((u) => u.uid === otherParticipantId);
+      
+                          // Debugging the matched participant
+                          console.log("Matched Participant:", otherParticipant);
+      
+                          const otherDisplayName = otherParticipant
+                              ? otherParticipant.displayName
+                              : users.length
+                              ? 'Unknown'
+                              : 'Loading...';
+      
+                          // Debugging the display name
+                          console.log("Other Display Name:", otherDisplayName);
+      
+                          return (
+                              <ListGroup.Item
+                                  key={id}
+                                  action
+                                  onClick={() => navigate(`/messages/${id}`)}
+                              >
+                                  <Row>
+                                      <Col>
+                                          Conversation with {otherDisplayName}
+                                          <br />
+                                          <small>Last Message: {lastMessage.content || 'No messages yet'}</small>
+                                      </Col>
+                                  </Row>
+                              </ListGroup.Item>
+                          );
+                      })}
+                  </ListGroup>
+                  <Button variant="secondary" className="mt-3" onClick={() => navigate('/found')}>
+                      Start New Conversation
+                  </Button>
+              </Container>
+          );
+      }
+      
+      
 
         return (
             <Container className="messages-page">
