@@ -13,16 +13,14 @@ import { useAuthState } from './utilities/firebase';
 import './App.css';
 
 const ProtectedRoute = ({ element, isAuthenticated, redirectTo }) => {
-  return isAuthenticated ? element : <Navigate to={redirectTo} />;
+  return isAuthenticated ? element : <Navigate to="/" replace />;
 };
 
 
 const App = () => {
   const location = useLocation();
-
-  const noNavRoutes = ['/', '/signin', '/signup'];
-
   const [user, loading, error] = useAuthState();
+  const noNavRoutes = ['/'];
 
   if (loading) {
     return <div>Loading...</div>;
@@ -39,8 +37,6 @@ const App = () => {
         <Routes>
           {/* Public Routes */}
           <Route path="/" element={<SignInPage />} />
-          <Route path="/signin" element={<SignInPage />} />
-          <Route path="/signup" element={<SignUp />} />
           <Route path="/found" element={<FoundFeedPage currentUser={user} />} />
           <Route path="/claimed" element={<ClaimedFeedPage currentUser={user} />} />
           <Route path="/messages" element={<MessagingApp user={user} />} />
@@ -50,23 +46,27 @@ const App = () => {
           {/* Protected Routes, commenting this for now because it sends the user back to sign in on refresh */}
           {/* <Route
             path="/found"
-            element={<ProtectedRoute element={<FoundFeedPage />} isAuthenticated={!!user} redirectTo="/signin" />}
+            element={<ProtectedRoute element={<FoundFeedPage currentUser={user}/>} isAuthenticated={!!user} />}
           />
           <Route
             path="/claimed"
-            element={<ProtectedRoute element={<ClaimedPage currentUser={user} />} isAuthenticated={!!user} redirectTo="/signin" />}
+            element={<ProtectedRoute element={<ClaimedFeedPage currentUser={user} />} isAuthenticated={!!user} />}
           />
           <Route
             path="/messages"
-            element={<ProtectedRoute element={<MessagesPage />} isAuthenticated={!!user} redirectTo="/signin" />}
+            element={<ProtectedRoute element={<MessagingApp user={user} />} isAuthenticated={!!user} />}
+          />
+          <Route
+            path="/messages/:conversationId"
+            element={<ProtectedRoute element={<MessagingApp user={user} />} isAuthenticated={!!user} />}
           />
           <Route
             path="/profile"
-            element={<ProtectedRoute element={<ProfilePage />} isAuthenticated={!!user} redirectTo="/signin" />}
+            element={<ProtectedRoute element={<ProfilePage />} isAuthenticated={!!user} />}
           />
           <Route
             path="/postfound"
-            element={<ProtectedRoute element={<PostItemPage />} isAuthenticated={!!user} redirectTo="/signin" />}
+            element={<ProtectedRoute element={<PostItemPage />} isAuthenticated={!!user} />}
           /> */}
         </Routes>
       </div>

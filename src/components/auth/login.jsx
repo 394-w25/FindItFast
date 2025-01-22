@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { loginWithEmail, signInWithGoogle, useDbUpdate } from '../../utilities/firebase';
+import { loginWithEmail, signInWithGoogle, useDbUpdate, database } from '../../utilities/firebase';
+import { ref, get } from 'firebase/database';
 import Logo from '../logo/Logo';
 import './auth.css';
 
@@ -29,28 +30,27 @@ const Login = () => {
         try {
 
             const result = await signInWithGoogle();
-            console.log('result:', result);
-            console.log('result.user:', result.user);
-            const userID = (result.user).uid;  
-            const email = (result.user).email; 
+            // console.log('result:', result);
+            const userID = result.uid;
 
-            if (!email.endsWith("@u.northwestern.edu")) {
-                setError("Please use a Northwestern email.");
-                return;
+            const userRef = ref(database, `/users/${userID}`);
+            const snapshot = await get(userRef);
+
+            if (!snapshot.exists()) {
+                const userData = {
+                    [userID]:
+                    {
+                        displayName: result.displayName,
+                        email: result.email,
+                        photoURL: result.photoURL,
+                        claimedItems: [],
+                        foundItems: [],
+                        about: ''
+                    }
+                };
+
+                await (update(userData));
             }
-
-            const userData = {
-                [userID]:
-                {
-                    displayName: result.user.displayName,
-                    email: result.user.email,
-                    photoURL: result.user.photoURL,
-                    claimedItems: [],
-                    foundItems: [],
-                    about: ''
-                }
-            };
-            await(update(userData));
 
             navigate('/found');
 
@@ -62,7 +62,7 @@ const Login = () => {
     return (
         <div className="auth-page">
             <Logo />
-            <h1>Sign In</h1>
+            {/* <h1>Sign In</h1>
             <form onSubmit={handleLogin} className="auth-form">
                 <input
                     type="email"
@@ -82,13 +82,19 @@ const Login = () => {
                 />
                 {error && <p className="error-message">{error}</p>}
                 <button type="submit" className="auth-button">Sign In</button>
-            </form>
+            </form> */}
             <button onClick={handleGoogleSignIn} className="auth-button google-button">
+                <img
+                    src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg"
+                    alt="Google logo"
+                    className="google-icon"
+                />
                 Sign In with Google
             </button>
-            <p>
+            {error && <p className="error-message">{error}</p>}
+            {/* <p>
                 Don't have an account yet? <Link to="/signup" className="auth-link">Sign Up</Link>
-            </p>
+            </p> */}
         </div>
     );
 };

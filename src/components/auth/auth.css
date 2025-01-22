@@ -8,6 +8,7 @@
     width: 100%;
     background-color: #f7f7f7;
     padding: 20px;
+    gap: 20px;
 }
 
 .auth-form {
@@ -15,7 +16,8 @@
     flex-direction: column;
     gap: 15px;
     width: 95%;
-    max-width: 320px; /* Add a max width to the form */
+    max-width: 320px;
+    /* Add a max width to the form */
     background-color: #fff;
     padding: 20px;
     border-radius: 10px;
@@ -63,14 +65,24 @@
 }
 
 .google-button {
-    background-color: #4285f4;
+    background-color: #6a4cc3;
     color: #fff;
     margin-top: 15px;
     padding-left: 70px;
     padding-right: 70px;
     margin-bottom: 10px;
+    font-size: 17px;
+    font-weight: bold;
+    align-items: center;
+}
+
+.google-icon {
+    width: 25px;
+    height: 25px;
+    margin-right: 8px;
+    margin-bottom: 2px;
 }
 
 .google-button:hover {
-    background-color: #357ae8;
+    background-color: #533a91;
 }
