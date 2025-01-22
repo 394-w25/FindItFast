@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { loginWithEmail, signInWithGoogle, useDbUpdate } from '../../utilities/firebase';
+import Logo from '../logo/Logo';
 import './auth.css';
 
 const Login = () => {
@@ -50,6 +51,7 @@ const Login = () => {
 
     return (
         <div className="auth-page">
+            <Logo />
             <h1>Sign In</h1>
             <form onSubmit={handleLogin} className="auth-form">
                 <input

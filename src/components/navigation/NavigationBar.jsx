@@ -14,10 +14,10 @@ const NavigationBar = () => {
             <i className="bi bi-search"></i>
             <p>Found Feed</p>
           </Nav.Link>
-          <Nav.Link as={NavLink} to="/claimed" className="nav-icon" activeclassname="active">
+          {/* <Nav.Link as={NavLink} to="/claimed" className="nav-icon" activeclassname="active">
             <i className="bi bi-search"></i>
             <p>Claimed Feed</p>
-          </Nav.Link>
+          </Nav.Link> */}
           <Nav.Link as={NavLink} to="/postfound" className="nav-icon" activeclassname="active">
             <i className="bi bi-plus-circle-fill"></i>
             <p>Post Found</p>

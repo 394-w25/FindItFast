@@ -8,6 +8,7 @@ import ProfilePage from './pages/ProfilePage';
 import PostItemPage from './pages/PostItemPage';
 import SignUp from './components/auth/signup';
 import NavigationBar from './components/navigation/NavigationBar';
+import Header from './components/header/Header';
 import { useAuthState } from './utilities/firebase';
 import './App.css';
 
@@ -33,6 +34,7 @@ const App = () => {
 
   return (
     <>
+      {!noNavRoutes.includes(location.pathname) && <Header />}
       <div className="main-content">
         <Routes>
           {/* Public Routes */}

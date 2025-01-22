@@ -25,7 +25,7 @@ const FoundFeedPage = ({ currentUser }) => {
         id: key,
         ...data[key],
       }));
-      setItems(transformedItems);
+      setItems(transformedItems.reverse());
     }
   }, [data]);
 

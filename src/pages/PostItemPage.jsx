@@ -114,19 +114,19 @@ const PostItemPage = () => {
                 if (!blob) {
                     throw new Error('No se pudo convertir la imagen capturada a Blob.');
                 }
-                const file = new File([blob], 'captured_image.jpg', { type: blob.type });
-                // console.log("Subiendo imagen capturada:", file);
+               
+                // Generate a unique file name using the current timestamp
+                const uniqueFileName = `captured_image_${Date.now()}.jpg`;
+                const file = new File([blob], uniqueFileName, { type: blob.type });
+
                 imageUrl = await uploadImage(file);
             } else if (image) {
-                // console.log("Subiendo imagen seleccionada:", image);
                 imageUrl = await uploadImage(image);
             }
 
-            // Genera un ID único para el ítem
             const itemId = Date.now().toString();
-            const itemPath = 'foundItems'; // Ajusta según sea necesario
+            const itemPath = 'foundItems';
 
-            // Guarda los datos del ítem en Firebase Realtime Database
             await set(ref(database, `${itemPath}/${itemId}`), {
                 title,
                 description,
@@ -145,7 +145,7 @@ const PostItemPage = () => {
             await set(userRef, [...currentFoundItems, itemId]);
 
             setSuccessMessage(`✅ Successfully posted a ${itemType} item!`);
-            console.log("Ítem publicado exitosamente:", itemId);
+            // console.log("Ítem publicado exitosamente:", itemId);
             // Reinicia los campos del formulario
             setTitle('');
             setDescription('');
@@ -155,28 +155,27 @@ const PostItemPage = () => {
             setCity('');
             setStateAddr('');
             setZip('');
-            setUseCurrentLocation(true); // Reinicia a la opción por defecto
+            setUseCurrentLocation(true);
         } catch (error) {
-            console.error('Error posting item:', error);
+            // console.error('Error posting item:', error);
             setErrorMessage(error.message || 'Failed to post item. Please try again.');
         } finally {
             setLoading(false);
         }
     };
 
-    // Función utilitaria para convertir una Data URL a un objeto Blob
     function dataURLtoBlob(dataurl) {
         if (!dataurl) {
             throw new Error("La Data URL está vacía o es null.");
         }
-        console.log("data url ->", dataurl);
+        // console.log("data url ->", dataurl);
 
         const arr = dataurl.split(',');
         if (arr.length !== 2) {
             throw new Error("Formato de Data URL inválido.");
         }
 
-        console.log("arr ->", arr);
+        // console.log("arr ->", arr);
         const mimeMatch = arr[0].match(/:(.*?);/);
         if (!mimeMatch) {
             throw new Error("No se pudo determinar el MIME type de la Data URL.");
@@ -197,12 +196,12 @@ const PostItemPage = () => {
         if (webcamRef.current) {
             const dataUrl = webcamRef.current.getScreenshot();
             if (dataUrl) {
-                console.log("Data URL capturada:", dataUrl);
+                // console.log("Data URL capturada:", dataUrl);
                 setCapturedImage(dataUrl);
                 setIsCameraOpen(false);
             } else {
                 setCameraError('Failed to capture image.');
-                console.error('Failed to capture image.');
+                // console.error('Failed to capture image.');
             }
         }
     }, [webcamRef]);
@@ -302,7 +301,7 @@ const PostItemPage = () => {
                                 }}
                                 className="video-stream"
                                 onUserMediaError={(err) => {
-                                    console.error("Error al acceder a la cámara:", err);
+                                    // console.error("Error al acceder a la cámara:", err);
                                     setCameraError('Unable to access the camera. Please check permissions and try again.');
                                 }}
                             />
@@ -324,12 +323,10 @@ const PostItemPage = () => {
                                     Cancel
                                 </button>
                             </div>
-                            {/* Muestra un mensaje de error si existe */}
                             {cameraError && <p className="error-message">{cameraError}</p>}
                         </div>
                     )}
 
-                    {/* Previsualización de la imagen capturada */}
                     {capturedImage && (
                         <div className="image-preview">
                             <img src={capturedImage} alt="Captured" />
@@ -339,7 +336,6 @@ const PostItemPage = () => {
                         </div>
                     )}
 
-                    {/* Previsualización de la imagen subida */}
                     {image && !capturedImage && (
                         <div className="image-preview">
                             <img src={URL.createObjectURL(image)} alt="Uploaded" />
@@ -350,7 +346,6 @@ const PostItemPage = () => {
                     )}
                 </div>
 
-                {/* Campos de título y descripción */}
                 <input
                     type="text"
                     placeholder="Enter item title"
@@ -367,7 +362,6 @@ const PostItemPage = () => {
                     required
                 />
 
-                {/* Botón de publicación */}
                 <button type="submit" className="submit-button" disabled={loading}>
                     <FaPaperPlane className="icon" /> {loading ? "Posting..." : `Post ${itemType} Item`}
                 </button>
