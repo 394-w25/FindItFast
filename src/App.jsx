@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Route, Routes, Navigate, useLocation } from 'r
 import SignInPage from './pages/SignInPage';
 import MessagingApp from './pages/MessagesPage';
 import FoundFeedPage from './pages/FoundFeedPage';
+import ClaimedFeedPage from './pages/ClaimedFeedPage';
 import ProfilePage from './pages/ProfilePage';
 import PostItemPage from './pages/PostItemPage';
 import SignUp from './components/auth/signup';
@@ -39,6 +40,7 @@ const App = () => {
           <Route path="/signin" element={<SignInPage />} />
           <Route path="/signup" element={<SignUp />} />
           <Route path="/found" element={<FoundFeedPage currentUser={user} />} />
+          <Route path="/claimed" element={<ClaimedFeedPage currentUser={user} />} />
           <Route path="/messages" element={<MessagingApp user={user} />} />
           <Route path="/messages/:conversationId" element={<MessagingApp user={user} />} />
           <Route path="/profile" element={<ProfilePage />} />
@@ -47,6 +49,10 @@ const App = () => {
           {/* <Route
             path="/found"
             element={<ProtectedRoute element={<FoundFeedPage />} isAuthenticated={!!user} redirectTo="/signin" />}
+          />
+          <Route
+            path="/claimed"
+            element={<ProtectedRoute element={<ClaimedPage currentUser={user} />} isAuthenticated={!!user} redirectTo="/signin" />}
           />
           <Route
             path="/messages"
