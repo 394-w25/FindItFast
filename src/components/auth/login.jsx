@@ -13,6 +13,10 @@ const Login = () => {
     const handleLogin = async (e) => {
         e.preventDefault();
         try {
+            if (!email.endsWith("@u.northwestern.edu")) {
+                setError("Please use a Northwestern email.");
+                return;
+            }
             await loginWithEmail(email, password); // Use Firebase email-password login
             navigate('/found'); // Redirect on successful login
         } catch (err) {
@@ -26,7 +30,13 @@ const Login = () => {
             const result = await signInWithGoogle();
             console.log('result:', result);
             console.log('result.user:', result.user);
-            const userID = (result.user).uid;
+            const userID = (result.user).uid;  
+            const email = (result.user).email; 
+
+            if (!email.endsWith("@u.northwestern.edu")) {
+                setError("Please use a Northwestern email.");
+                return;
+            }
 
             const userData = {
                 [userID]:
