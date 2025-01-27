@@ -44,6 +44,45 @@ form {
     transition: background 0.3s, color 0.3s;
 }
 
+/* Add these new styles to your existing PostItemPage.css */
+
+/* Location status styles */
+.location-status {
+    margin: 10px 0;
+    padding: 8px;
+    border-radius: 8px;
+    text-align: center;
+    font-size: 14px;
+}
+
+.location-status.error {
+    background-color: #ffe6e6;
+    color: #d32f2f;
+    border: 1px solid #ffcdd2;
+}
+
+.location-status.success {
+    background-color: #e8f5e9;
+    color: #2e7d32;
+    border: 1px solid #c8e6c9;
+}
+
+/* Spinning animation for loading state */
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.spinning {
+    animation: spin 1s linear infinite;
+}
+
+/* Location loading state */
+.location-button.loading {
+    background-color: #9383c9;
+    cursor: wait;
+}
+
 .location-button.active {
     background-color: #6a4cc3;
     color: #fff;
@@ -192,7 +231,8 @@ form {
     border: 2px solid #6a4cc3;
     border-radius: 10px;
     transform: translate(-50%, -50%);
-    pointer-events: none; /* Permite interactuar con el video debajo */
+    pointer-events: none;
+    display: block;
 }
 
 /* Estilos para previsualización de imágenes */
