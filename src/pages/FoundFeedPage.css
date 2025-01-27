@@ -6,6 +6,40 @@
     min-height: 100vh;
   }
   
+  .found-feed-tabs {
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: center;
+    gap: 5px;
+    border: none;
+  }
+  
+  .found-feed-tabs .nav-link {
+    color: #6a4cc3;
+    font-weight: 600;
+    padding: 8px 37px;
+    border: none;
+    border-radius: 10px;
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+  
+  .found-feed-tabs .nav-link.active {
+    background-color: #6a4cc3 !important;
+    color: white;
+    border: none;
+  }
+  
+  .found-feed-tabs .nav-link:hover {
+    background-color: #d3c4f7;
+    color: #6a4cc3;
+  }
+  
+  .custom-tab-title {
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+  }
+  
   .found-feed-header {
     display: flex;
     flex-direction: column;

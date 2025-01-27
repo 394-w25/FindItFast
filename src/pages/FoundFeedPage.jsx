@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Tabs, Tab } from 'react-bootstrap';
 import ItemCard from '../components/foundfeed/Itemcard';
 import Modal from '../components/foundfeed/modal';
 import MapView from '../components/foundfeed/mapview';
@@ -14,6 +15,7 @@ const FoundFeedPage = ({ currentUser }) => {
   const [selectedItem, setSelectedItem] = useState(null);
   const [viewMode, setViewMode] = useState('list'); // 'list' or 'map'
   const [searchQuery, setSearchQuery] = useState('');
+  const [activeTab, setActiveTab] = useState('found');
   const [data, error] = useDbData('foundItems');
   const [users, setUsers] = useState({});
   const [userData, userError] = useDbData('users');
@@ -57,48 +59,39 @@ const FoundFeedPage = ({ currentUser }) => {
     setSearchQuery(query.toLowerCase());
   };
 
-const handleClaim = async (item) => {
-  const posterId = item.postedBy; // Assuming `postedBy` contains the ID of the user who posted the item.
-
-  if (posterId && posterId !== currentUser.uid) {
+  const handleClaim = async (item) => {
+    const posterId = item.postedBy; // Assuming `postedBy` contains the ID of the user who posted the item.
     const conversationId = [currentUser.uid, posterId].sort().join('_');
     navigate(`/messages/${conversationId}`);
-  } else {
-    try {
-      // Mark the item as claimed and move it to the claimed feed
-      const claimedItem = {
-        ...item,
-        claimedBy: currentUser.uid, // Add the ID of the claimer
-        claimedAt: Date.now(), // Add timestamp for when it was claimed
-      };
-
-      const foundItemPath = `foundItems/${item.id}`;
-      const claimedItemPath = `claimedItems/${item.id}`;
-
-      // Remove the item from the "Found Feed" and add it to the "Claimed Feed"
-      await Promise.all([
-        remove(ref(database, foundItemPath)), // Remove from "foundItems"
-        set(ref(database, claimedItemPath), claimedItem), // Add to "claimedItems"
-      ]);
-
-      alert('You claimed your own item, and it has been moved to the Claimed Feed.');
-    } catch (error) {
-      console.error('Error claiming item:', error);
-      alert('Failed to claim the item. Please try again.');
-    }
-  }
-};
-
-
+  };
 
   const filteredItems = items.filter((item) =>
     item.title.toLowerCase().includes(searchQuery) ||
     item.description.toLowerCase().includes(searchQuery)
   );
 
+  const displayedItems = filteredItems.filter((item) =>
+    activeTab === 'found' ? !item.isClaimed : item.isClaimed
+  );
+
   return (
     <div className="found-feed">
       <header className="found-feed-header">
+        <Tabs
+          activeKey={activeTab}
+          onSelect={(key) => setActiveTab(key)}
+          className="found-feed-tabs"
+        >
+          <Tab
+            eventKey="found"
+            title={<span className="custom-tab-title">Found Items</span>}
+          />
+          <Tab
+            eventKey="claimed"
+            title={<span className="custom-tab-title">Claimed Items</span>}
+          />
+        </Tabs>
+
         <SearchBar onSearch={handleSearch} />
         <div className="view-mode-buttons">
           <button
@@ -118,18 +111,19 @@ const handleClaim = async (item) => {
       <main className="found-feed-main">
         {viewMode === 'list' ? (
           <div className="item-list">
-            {filteredItems.map((item) => (
+            {displayedItems.map((item) => (
               <ItemCard
                 key={item.id}
                 item={item}
                 user={users[item.postedBy]}
                 onViewMap={openModal}
-                onClaim={handleClaim} // Pass handleClaim to ItemCard.
+                onClaim={handleClaim}
+                showClaimButton={!item.isClaimed}
               />
             ))}
           </div>
         ) : (
-          <MapView items={filteredItems} />
+          <MapView items={displayedItems} />
         )}
       </main>
       {isModalOpen && selectedItem && (
