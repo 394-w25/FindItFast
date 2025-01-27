@@ -20,8 +20,18 @@ const ProfilePage = () => {
   const [foundItemsKeys, foundError] = useDbData(`users/${user?.uid}/foundItems`);
   const [dbUserData, dbUserDataError] = useDbData(`users/${user?.uid}`);
   const [allFoundItems, foundItemsError] = useDbData(`foundItems`);
-  const [allClaimedItems, claimedItemsError] = useDbData(`claimedItems`);
   const [allUsers, usersError] = useDbData(`users`);
+
+  // Error handling
+  if (dbUserDataError) {
+    console.error("Error fetching user data:", dbUserDataError);
+    return <div>Error loading profile information. Please try again later.</div>;
+  }
+  
+  if (usersError) {
+    console.error("Error fetching users:", usersError);
+    return <div>Error loading user details. Please try again later.</div>;
+  }
 
   const getItemsFromKeys = (itemKeys, itemsCollection) => {
     if (!itemKeys || !itemsCollection) return [];
@@ -31,8 +41,8 @@ const ProfilePage = () => {
       .reverse();
   };
 
-  const claimedItems = getItemsFromKeys(claimedItemsKeys, allClaimedItems);
   const foundItems = getItemsFromKeys(foundItemsKeys, allFoundItems);
+  const claimedItems = getItemsFromKeys(claimedItemsKeys, allFoundItems);
 
   const handleSaveAbout = async () => {
     try {
@@ -60,13 +70,14 @@ const ProfilePage = () => {
     setIsModalOpen(false);
   };
 
+  // console.log('userPhotoURL:', user?.photoURL);
   return (
     <Container className="profile-page">
       <Row className="justify-content-center">
         <Col xs={12} md={8} className="text-center">
           {user?.photoURL ? (
             <img
-              src={user?.photoURL}
+              src={user.photoURL}
               className="profile-picture"
             />
           ) : (
@@ -121,6 +132,7 @@ const ProfilePage = () => {
                       user={allUsers?.[item.postedBy]}
                       onViewMap={openModal}
                       showClaimButton={false}
+                      showUserWhoClaimed={false}
                     />
                   ))
                 ) : (

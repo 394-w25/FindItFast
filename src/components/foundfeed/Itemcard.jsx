@@ -4,10 +4,16 @@ import { formatDistanceToNow } from 'date-fns';
 import { FaMapMarkedAlt } from 'react-icons/fa'; // Importing map icon from react-icons
 import { PersonCircle } from 'react-bootstrap-icons';
 import { Card } from 'react-bootstrap';
-import { useAuthState } from '../../utilities/firebase';
+import { useAuthState, useDbData } from '../../utilities/firebase';
 
-const ItemCard = ({ item, user, onViewMap, onClaim = {}, showClaimButton = true }) => {
-  const [currUser] = useAuthState(); 
+const ItemCard = ({ item, user, onViewMap, onClaim = {}, showClaimButton = true, showUserWhoClaimed = true }) => {
+  const [currUser] = useAuthState();
+  const [allUsers, usersError] = useDbData(`users`);
+
+  if (usersError) {
+    console.error("Error fetching users:", usersError);
+    return <div>Error loading user details. Please try again later.</div>;
+  }
 
   const handleViewMap = () => {
     onViewMap(item);
@@ -20,8 +26,14 @@ const ItemCard = ({ item, user, onViewMap, onClaim = {}, showClaimButton = true 
   // Calculate "found X hours ago"
   const foundTimeAgo = formatDistanceToNow(new Date(item.timestamp), { addSuffix: true });
 
+  const claimedTimeAgo = item.isClaimed
+    ? formatDistanceToNow(new Date(item.claimedAt), { addSuffix: true })
+    : null;
+
   // console.log('currUser:', user);
   const isOwner = currUser?.uid === item.postedBy;
+
+  const userWhoClaimed = (allUsers && item.isClaimed) ? allUsers[item.claimedBy] : null;
 
   return (
 
@@ -41,6 +53,25 @@ const ItemCard = ({ item, user, onViewMap, onClaim = {}, showClaimButton = true 
       <Card.Body>
         <Card.Title>{item.title}</Card.Title>
         <Card.Text>{item.description}</Card.Text>
+
+        {showUserWhoClaimed && item.isClaimed && (
+          <div className="claimed-info">
+            <div className="claimed-by-text">
+              Claimed By:
+            </div>
+            <div className="item-card-header">
+              {userWhoClaimed?.photoURL ? (
+                <img src={userWhoClaimed.photoURL} alt={userWhoClaimed.displayName} className="poster-profile-picture" />
+              ) : (
+                <PersonCircle className="poster-profile-picture" />
+              )}
+              <div>
+                <span className="poster-display-name">{userWhoClaimed?.displayName || 'Anonymous'}</span>
+                <p className="post-time text-muted">{claimedTimeAgo}</p>
+              </div>
+            </div>
+          </div>
+        )}
       </Card.Body>
 
       <Card.Footer className="item-actions">
