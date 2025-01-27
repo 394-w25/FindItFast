@@ -14,6 +14,8 @@ const PostItemPage = () => {
     const [image, setImage] = useState(null);
     const [itemType, setItemType] = useState('lost');
     const [useCurrentLocation, setUseCurrentLocation] = useState(true);
+    const [locationStatus, setLocationStatus] = useState('');
+    const [locationLoading, setLocationLoading] = useState(false);
     const [street, setStreet] = useState('');
     const [city, setCity] = useState('');
     const [stateAddr, setStateAddr] = useState('');
@@ -23,6 +25,7 @@ const PostItemPage = () => {
     const [successMessage, setSuccessMessage] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
 
+    const [cameraPermission, setCameraPermission] = useState(false);
     const [isCameraOpen, setIsCameraOpen] = useState(false);
     const [capturedImage, setCapturedImage] = useState(null);
     const webcamRef = useRef(null);
@@ -36,6 +39,8 @@ const PostItemPage = () => {
             // console.log("Imagen seleccionada:", file);
         }
     };
+
+
 
     const fetchCoordinates = async (address) => {
         // console.log("Obteniendo coordenadas para:", address);
@@ -54,21 +59,37 @@ const PostItemPage = () => {
         return new Promise((resolve, reject) => {
             if (!navigator.geolocation) {
                 reject(new Error('Geolocation is not supported by your browser.'));
-            } else {
-                navigator.geolocation.getCurrentPosition(
-                    (position) => {
-                        // console.log("Ubicación obtenida:", position.coords);
-                        resolve({
-                            latitude: position.coords.latitude,
-                            longitude: position.coords.longitude,
-                        });
-                    },
-                    (error) => {
-                        // console.error("Error obteniendo ubicación:", error);
-                        reject(new Error('Unable to retrieve your location.'));
-                    }
-                );
+                return;
             }
+    
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    resolve({
+                        latitude: position.coords.latitude,
+                        longitude: position.coords.longitude,
+                    });
+                },
+                (error) => {
+                    switch(error.code) {
+                        case error.PERMISSION_DENIED:
+                            reject(new Error('Location permission denied.'));
+                            break;
+                        case error.POSITION_UNAVAILABLE:
+                            reject(new Error('Location information unavailable.'));
+                            break;
+                        case error.TIMEOUT:
+                            reject(new Error('Location request timed out.'));
+                            break;
+                        default:
+                            reject(new Error('An unknown error occurred.'));
+                    }
+                },
+                {
+                    enableHighAccuracy: true,
+                    timeout: 5000,
+                    maximumAge: 0
+                }
+            );
         });
     };
 
@@ -209,6 +230,18 @@ const PostItemPage = () => {
         }
     }, [webcamRef]);
 
+    const handleCameraOpen = async () => {
+        try {
+            const permission = await navigator.mediaDevices.getUserMedia({ video: true });
+            setCameraPermission(true);
+            setIsCameraOpen(true);
+            setCameraError('');
+        } catch (error) {
+            setCameraError('Camera access denied. Please enable in browser settings.');
+            setCameraPermission(false);
+        }
+    };
+
     return (
         <div className="post-item-page">
             <h2>Post a found item</h2>
@@ -217,13 +250,33 @@ const PostItemPage = () => {
             <form onSubmit={handleSubmit}>
                 {/* Opciones de ubicación */}
                 <div className="location-mode-buttons">
-                    <button
-                        type="button"
-                        className={`location-button ${useCurrentLocation ? 'active' : ''}`}
-                        onClick={() => setUseCurrentLocation(true)}
-                    >
-                        <FaMapMarkerAlt className="icon" /> Use Current Location
-                    </button>
+                <button
+                    type="button"
+                    className={`location-button ${useCurrentLocation ? 'active' : ''}`}
+                    onClick={async () => {
+                        setUseCurrentLocation(true);
+                        try {
+                            setLocationLoading(true);
+                            // Check permission first
+                            const permission = await navigator.permissions.query({ name: 'geolocation' });
+                            if (permission.state === 'denied') {
+                                setLocationLoading(false);
+                                setLocationStatus('Location access denied. Please enable in browser settings.');
+                                return;
+                            }
+                            // If permission granted or prompt, try to get location
+                            const coords = await getCurrentLocation();
+                            setLocationLoading(false);
+                            setLocationStatus(`Location obtained: ${coords.latitude.toFixed(4)}, ${coords.longitude.toFixed(4)}`);
+                        } catch (error) {
+                            setLocationLoading(false);
+                            setLocationStatus('Error getting location: ' + error.message);
+                        }
+                    }}
+                >
+                    <FaMapMarkerAlt className={`icon ${locationLoading ? 'spinning' : ''}`} />
+                    {locationLoading ? 'Getting Location...' : 'Use Current Location'}
+                </button>
                     <button
                         type="button"
                         className={`location-button ${!useCurrentLocation ? 'active' : ''}`}
@@ -232,6 +285,11 @@ const PostItemPage = () => {
                         <FaAddressCard className="icon" /> Enter Address Manually
                     </button>
                 </div>
+                {useCurrentLocation && locationStatus && (
+                    <div className={`location-status ${locationStatus.includes('Error') ? 'error' : 'success'}`}>
+                        {locationStatus}
+                    </div>
+                )}
 
                 {/* Campos de dirección manual */}
                 {!useCurrentLocation && (
@@ -276,7 +334,7 @@ const PostItemPage = () => {
                     <div className="image-mode-buttons">
                         <button
                             type="button"
-                            onClick={() => setIsCameraOpen(true)}
+                            onClick={handleCameraOpen}
                             className="image-button"
                         >
                             <FaCamera className="icon" /> Take Photo
@@ -291,7 +349,7 @@ const PostItemPage = () => {
                             />
                         </label>
                     </div>
-
+                    {cameraError && <div className="location-status error">{cameraError}</div>}
                     {/* Muestra el componente react-webcam si la cámara está abierta */}
                     {isCameraOpen && (
                         <div className="camera-container">
@@ -304,12 +362,10 @@ const PostItemPage = () => {
                                 }}
                                 className="video-stream"
                                 onUserMediaError={(err) => {
-                                    // console.error("Error al acceder a la cámara:", err);
-                                    setCameraError('Unable to access the camera. Please check permissions and try again.');
+                                    setCameraError('Camera access denied. Please enable in browser settings.');
+                                    setCameraPermission(false);
                                 }}
                             />
-                            {/* Marco de depuración sobre el video */}
-                            <div className="video-overlay"></div>
                             <div className="camera-buttons">
                                 <button
                                     type="button"
@@ -320,16 +376,18 @@ const PostItemPage = () => {
                                 </button>
                                 <button
                                     type="button"
-                                    onClick={() => setIsCameraOpen(false)}
+                                    onClick={() => {
+                                        setIsCameraOpen(false);
+                                        setCameraError('');
+                                    }}
                                     className="close-camera-button"
                                 >
                                     Cancel
                                 </button>
                             </div>
-                            {cameraError && <p className="error-message">{cameraError}</p>}
+                            {cameraError && <div className="location-status error">{cameraError}</div>}
                         </div>
                     )}
-
                     {capturedImage && (
                         <div className="image-preview">
                             <img src={capturedImage} alt="Captured" />
