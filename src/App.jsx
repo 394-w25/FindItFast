@@ -6,10 +6,10 @@ import FoundFeedPage from './pages/FoundFeedPage';
 import ClaimedFeedPage from './pages/ClaimedFeedPage';
 import ProfilePage from './pages/ProfilePage';
 import PostItemPage from './pages/PostItemPage';
-import SignUp from './components/auth/signup';
 import NavigationBar from './components/navigation/NavigationBar';
 import Header from './components/header/Header';
 import { useAuthState } from './utilities/firebase';
+import SmartphoneFrame from './components/phoneframe/SmartphoneFrame';
 import './App.css';
 
 const ProtectedRoute = ({ element, isAuthenticated, redirectTo }) => {
@@ -77,7 +77,10 @@ const App = () => {
 
 const AppWrapper = () => (
   <Router>
-    <App />
+    <SmartphoneFrame>
+      <App />
+    </SmartphoneFrame>
+
   </Router>
 );
 

@@ -7,7 +7,7 @@ import './NavigationBar.css';
 
 const NavigationBar = () => {
   return (
-    <Navbar fixed="bottom" className="bg-light border-top">
+    <Navbar className="navbar">
       <Container className="d-flex justify-content-around">
         <Nav className="w-100 d-flex justify-content-between">
           <Nav.Link as={NavLink} to="/found" className="nav-icon" activeclassname="active">
