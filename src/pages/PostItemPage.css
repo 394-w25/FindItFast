@@ -28,7 +28,9 @@ form {
     display: flex;
     gap: 10px;
     margin-top: 10px;
-    justify-content: center; /* Centrar los botones */
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
 }
 
 .location-button {
@@ -42,6 +44,8 @@ form {
     cursor: pointer;
     font-size: 14px;
     transition: background 0.3s, color 0.3s;
+    width: 100%;
+    justify-content: center;
 }
 
 /* Add these new styles to your existing PostItemPage.css */
@@ -101,7 +105,9 @@ form {
     display: flex;
     gap: 10px;
     margin-bottom: 10px;
-    justify-content: center; /* Centrar los botones */
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
 }
 
 .image-button {
@@ -115,7 +121,9 @@ form {
     cursor: pointer;
     font-size: 14px;
     transition: background 0.3s, color 0.3s;
-    text-decoration: none; /* Remover subrayado en labels */
+    text-decoration: none;
+    width: 100%;
+    justify-content: center;
 }
 
 .image-button:hover,
@@ -196,10 +204,25 @@ form {
 /* Estilos generales para los botones dentro de la cámara */
 .camera-buttons {
     display: flex;
-    gap: 10px;
+    gap: 75px;
     margin-top: 10px;
     justify-content: center; /* Centrar los botones */
 }
+
+.camera-container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start; /* Align contents to the left */
+    margin-left: 10px; /* Add spacing to move the container if necessary */
+  }
+  
+  .video-stream {
+    width: 100%; /* Ensure the video is responsive */
+    max-width: 300px; /* Optional: Set a max width */
+    border-radius: 10px; /* Optional: Add rounded corners */
+    object-fit: cover;
+    margin-left: -10px; /* Shift the video slightly to the left */
+  }
 
 .capture-button,
 .close-camera-button {
@@ -244,8 +267,8 @@ form {
 }
 
 .image-preview img {
-    max-width: 100px;
-    max-height: 100px;
+    max-width: 80px;
+    max-height: 80px;
     border-radius: 5px;
     border: 1px solid #ccc;
 }
