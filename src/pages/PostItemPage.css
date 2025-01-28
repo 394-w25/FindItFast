@@ -272,7 +272,7 @@ button:disabled {
 }
 
 /* Responsividad para pantallas pequeñas */
-@media (max-width: 700px) {
+@media (max-width: 800px) {
     .location-mode-buttons,
     .image-mode-buttons {
         flex-direction: column;

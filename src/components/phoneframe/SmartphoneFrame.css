@@ -21,13 +21,14 @@
 
 .smartphone-notch {
   width: 210px;
-  height: 30px;
-  background: #000;
+  height: 31px;
+  background: #141313;
   border-radius: 10px;
   position: absolute;
-  top: 10px;
+  top: -10px;
   left: 50%;
   transform: translateX(-50%);
+  z-index: 10; 
 }
 
 .smartphone-content {
