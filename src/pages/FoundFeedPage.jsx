@@ -5,7 +5,7 @@ import Modal from '../components/foundfeed/modal';
 import MapView from '../components/foundfeed/mapview';
 import SearchBar from '../components/foundfeed/searchbar';
 import { database, useDbData } from '../utilities/firebase';
-import { ref, set, remove } from 'firebase/database';
+import { ref, set, update, get } from 'firebase/database';
 import { useNavigate } from 'react-router-dom';
 import './FoundFeedPage.css';
 
@@ -19,6 +19,7 @@ const FoundFeedPage = ({ currentUser }) => {
   const [data, error] = useDbData('foundItems');
   const [users, setUsers] = useState({});
   const [userData, userError] = useDbData('users');
+  const [claimedItems, setClaimedItems] = useState({});
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -36,6 +37,25 @@ const FoundFeedPage = ({ currentUser }) => {
       setUsers(userData); // Store user profile data
     }
   }, [userData]);
+
+  useEffect(() => {
+    // Fetch claimed items from conversations
+    const conversationsRef = ref(database, 'messages');
+    get(conversationsRef).then((snapshot) => {
+      const conversations = snapshot.val() || {};
+      let claimedItemsMap = {};
+
+      Object.values(conversations).forEach((conversation) => {
+        if (conversation.claimedItems) {
+          Object.keys(conversation.claimedItems).forEach((itemId) => {
+            claimedItemsMap[itemId] = conversation.claimedItems[itemId]; // Store claimed status
+          });
+        }
+      });
+
+      setClaimedItems(claimedItemsMap);
+    });
+  }, []);
 
   if (error || userError) {
     return <div>Error fetching data: {error?.message || userError?.message}</div>;
@@ -59,10 +79,43 @@ const FoundFeedPage = ({ currentUser }) => {
     setSearchQuery(query.toLowerCase());
   };
 
+  // Modified Handle Claim Function to Support Multiple Items
   const handleClaim = async (item) => {
-    const posterId = item.postedBy; // Assuming `postedBy` contains the ID of the user who posted the item.
+    const posterId = item.postedBy;
+    const itemId = item.id;
+    if (!posterId || posterId === currentUser.uid) {
+      alert("You can't claim your own item!");
+      return;
+    }
+
+    // Generate conversationId
     const conversationId = [currentUser.uid, posterId].sort().join('_');
-    navigate(`/messages/${conversationId}`);
+    const conversationRef = ref(database, `messages/${conversationId}`);
+
+    try {
+      const snapshot = await get(conversationRef);
+      let conversationData = snapshot.val();
+
+      if (conversationData) {
+        let updatedItemIds = conversationData.itemIds || [];
+        if (!updatedItemIds.includes(itemId)) {
+          updatedItemIds.push(itemId);
+        }
+
+        await update(conversationRef, {
+          itemIds: updatedItemIds
+        });
+      } else {
+        await set(conversationRef, {
+          itemIds: [itemId],
+          claimedItems: {} // Initialize empty claimed items tracker
+        });
+      }
+
+      navigate(`/messages/${conversationId}`);
+    } catch (error) {
+      console.error("Error handling claim:", error);
+    }
   };
 
   const filteredItems = items.filter((item) =>
@@ -70,8 +123,9 @@ const FoundFeedPage = ({ currentUser }) => {
     item.description.toLowerCase().includes(searchQuery)
   );
 
+  // Separate found vs. claimed items dynamically
   const displayedItems = filteredItems.filter((item) =>
-    activeTab === 'found' ? !item.isClaimed : item.isClaimed
+    activeTab === 'found' ? !claimedItems[item.id] : claimedItems[item.id]
   );
 
   return (
@@ -82,14 +136,8 @@ const FoundFeedPage = ({ currentUser }) => {
           onSelect={(key) => setActiveTab(key)}
           className="found-feed-tabs"
         >
-          <Tab
-            eventKey="found"
-            title={<span className="custom-tab-title">Found Items</span>}
-          />
-          <Tab
-            eventKey="claimed"
-            title={<span className="custom-tab-title">Claimed Items</span>}
-          />
+          <Tab eventKey="found" title={<span className="custom-tab-title">Found Items</span>} />
+          <Tab eventKey="claimed" title={<span className="custom-tab-title">Claimed Items</span>} />
         </Tabs>
 
         <SearchBar onSearch={handleSearch} />
@@ -118,7 +166,7 @@ const FoundFeedPage = ({ currentUser }) => {
                 user={users[item.postedBy]}
                 onViewMap={openModal}
                 onClaim={handleClaim}
-                showClaimButton={!item.isClaimed}
+                showClaimButton={!claimedItems[item.id]}
               />
             ))}
           </div>
