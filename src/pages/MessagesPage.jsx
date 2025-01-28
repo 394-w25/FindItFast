@@ -82,7 +82,6 @@ const MessagingApp = ({ user }) => {
         }
 
         if (!conversationId) {
-          console.log("Rendering conversation list view...");
       
           return (
               <Container>
@@ -90,32 +89,19 @@ const MessagingApp = ({ user }) => {
                   <ListGroup>
                       {conversations.map(([id, messages]) => {
                           const lastMessage = Object.values(messages || {}).pop() || {};
-                          
-                          // Debugging the last message data
-                          console.log("Conversation ID:", id);
-                          console.log("Last Message:", lastMessage);
       
                           const otherParticipantId =
                               lastMessage?.receiverId === user.uid
                                   ? lastMessage.senderId
                                   : lastMessage?.receiverId;
       
-                          // Debugging the other participant ID
-                          console.log("Other Participant ID:", otherParticipantId);
-      
                           const otherParticipant = users.find((u) => u.uid === otherParticipantId);
-      
-                          // Debugging the matched participant
-                          console.log("Matched Participant:", otherParticipant);
       
                           const otherDisplayName = otherParticipant
                               ? otherParticipant.displayName
                               : users.length
                               ? 'Unknown'
                               : 'Loading...';
-      
-                          // Debugging the display name
-                          console.log("Other Display Name:", otherDisplayName);
       
                           return (
                               <ListGroup.Item

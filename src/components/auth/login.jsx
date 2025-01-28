@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { loginWithEmail, signInWithGoogle, useDbUpdate, database } from '../../utilities/firebase';
 import { ref, get } from 'firebase/database';
 import Logo from '../logo/Logo';
+import googleLogo from '../images/googlelogo.svg';
 import './auth.css';
 
 const Login = () => {
@@ -85,7 +86,7 @@ const Login = () => {
             </form> */}
             <button onClick={handleGoogleSignIn} className="auth-button google-button">
                 <img
-                    src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg"
+                    src={googleLogo}
                     alt="Google logo"
                     className="google-icon"
                 />
