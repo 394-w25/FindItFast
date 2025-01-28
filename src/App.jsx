@@ -80,7 +80,6 @@ const AppWrapper = () => (
     <SmartphoneFrame>
       <App />
     </SmartphoneFrame>
-
   </Router>
 );
 

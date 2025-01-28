@@ -149,8 +149,8 @@ export const useDbAdd = (path) => {
 export const useDbUpdate = (path) => {
   const [result, setResult] = useState();
   const updateData = useCallback(async (value) => {
-      console.log('Updating path:', path);
-      console.log('Value before update:', value);
+      // console.log('Updating path:', path);
+      // console.log('Value before update:', value);
 
       if (!value || typeof value !== 'object') {
           console.error("Invalid value passed to updateData:", value);
