@@ -82,8 +82,8 @@
 .item-actions {
   display: flex;
   justify-content: center;
-  gap: 140px;
-  margin-top: 10px;
+  gap: 75px;
+  margin-top: 0;
 }
 
 .claimed-info {

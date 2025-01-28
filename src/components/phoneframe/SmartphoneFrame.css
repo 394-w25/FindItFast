@@ -1,0 +1,36 @@
+.smartphone-container {
+  display: flex;
+  justify-content: center;
+  align-items: center; 
+  min-height: 100vh;
+}
+
+.smartphone {
+  width: 375px;
+  height: 760px;
+  background: #fff;
+  border-radius: 40px;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+  position: relative;
+  overflow: hidden;
+  border: 15px solid #141313;
+  display: flex;
+  flex-direction: column;
+}
+
+.smartphone-notch {
+  width: 210px;
+  height: 30px;
+  background: #000;
+  border-radius: 10px;
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.smartphone-content {
+  width: 100%;
+  height: 100%;
+  overflow-y: auto;
+}
