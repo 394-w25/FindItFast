@@ -8,14 +8,25 @@ import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from 'fire
 
 // https://firebase.google.com/docs/web/setup#available-libraries
 
+// const firebaseConfig = {
+//   apiKey: "AIzaSyDKsTRg9qfBah9ouYe5zNaiK2ZUU9t5dhY",
+//   authDomain: "finditfast-c1f12.firebaseapp.com",
+//   projectId: "finditfast-c1f12",
+//   storageBucket: "finditfast-c1f12.firebasestorage.app",
+//   messagingSenderId: "229477505258",
+//   appId: "1:229477505258:web:7f33f6ff95f26c91b6df93",
+//   measurementId: "G-SDYSN563FJ"
+// };
+
 const firebaseConfig = {
   apiKey: "AIzaSyDKsTRg9qfBah9ouYe5zNaiK2ZUU9t5dhY",
   authDomain: "finditfast-c1f12.firebaseapp.com",
+  databaseURL: "https://finditfast-c1f12-default-rtdb.firebaseio.com",
   projectId: "finditfast-c1f12",
   storageBucket: "finditfast-c1f12.firebasestorage.app",
   messagingSenderId: "229477505258",
-  appId: "1:229477505258:web:7f33f6ff95f26c91b6df93",
-  measurementId: "G-SDYSN563FJ"
+  appId: "1:229477505258:web:e3e12d6b27d3f34eb6df93",
+  measurementId: "G-J4J0P6L5LN"
 };
 
 // Initialize Firebase

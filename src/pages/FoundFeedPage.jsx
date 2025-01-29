@@ -125,7 +125,7 @@ const FoundFeedPage = ({ currentUser }) => {
 
   // Separate found vs. claimed items dynamically
   const displayedItems = filteredItems.filter((item) =>
-    activeTab === 'found' ? !claimedItems[item.id] : claimedItems[item.id]
+    activeTab === 'found' ? !item.isClaimed : item.isClaimed
   );
 
   return (
@@ -166,7 +166,7 @@ const FoundFeedPage = ({ currentUser }) => {
                 user={users[item.postedBy]}
                 onViewMap={openModal}
                 onClaim={handleClaim}
-                showClaimButton={!claimedItems[item.id]}
+                showClaimButton={!item.isClaimed}
               />
             ))}
           </div>
