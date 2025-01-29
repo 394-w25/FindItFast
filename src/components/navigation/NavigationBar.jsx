@@ -10,7 +10,7 @@ const NavigationBar = () => {
     <Navbar className="navbar">
       <Container className="d-flex justify-content-around">
         <Nav className="w-100 d-flex justify-content-between">
-          <Nav.Link as={NavLink} to="/found" className="nav-icon" activeclassname="active">
+          <Nav.Link as={NavLink} to="/" className="nav-icon" activeclassname="active">
             <i className="bi bi-search"></i>
             <p>Found Feed</p>
           </Nav.Link>
