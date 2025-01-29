@@ -46,7 +46,7 @@ export const signInWithGoogle = async () => {
       emailDomain !== 'northwestern.edu' &&
       emailDomain !== 'u.northwestern.edu'
     ) {
-      throw new Error('Please use a Northwestern University email to sign in.');
+      // throw new Error('Please use a Northwestern University email to sign in.');
     }
 
     // Continue with the authenticated user

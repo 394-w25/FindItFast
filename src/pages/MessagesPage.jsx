@@ -4,6 +4,8 @@ import { database } from '../utilities/firebase';
 import { ref, push, onValue, update, get } from 'firebase/database';
 import { Button, Form, ListGroup, Container, Row, Col, Card } from 'react-bootstrap';
 import { useParams, useNavigate } from 'react-router-dom';
+import { Toast, ToastContainer } from 'react-bootstrap';
+
 
 
 const MessagingApp = ({ user }) => {
@@ -17,6 +19,10 @@ const MessagingApp = ({ user }) => {
    const [loading, setLoading] = useState(true);
    const [items, setItems] = useState([]); // Store the found items in the conversation
    const [claimedItems, setClaimedItems] = useState({}); // Store claimed item statuses
+   const [showToast, setShowToast] = useState(false);
+   const [toastMessage, setToastMessage] = useState('');
+
+
 
 
    useEffect(() => {
@@ -37,7 +43,6 @@ const MessagingApp = ({ user }) => {
     const conversationsRef = ref(database, 'messages');
     onValue(conversationsRef, (snapshot) => {
         const data = snapshot.val();
-        console.log("Raw conversations data from Firebase:", data); // Debugging log
 
         if (data) {
             const userConversations = Object.entries(data).filter(([id, conversation]) =>
@@ -46,7 +51,6 @@ const MessagingApp = ({ user }) => {
                 )
             );
 
-            console.log("Filtered user conversations:", userConversations); // Debugging log
             setConversations(userConversations);
         } else {
             setConversations([]);
@@ -113,47 +117,57 @@ const MessagingApp = ({ user }) => {
 
 
    // Function to mark an item as claimed
-   const markAsClaimed = async (itemId, posterId) => {
-       if (posterId !== user.uid) {
-           alert("Only the person who posted this item can mark it as claimed.");
-           return;
-       }
+   const markAsClaimed = async (itemId) => {
+    if (!conversationId) {
+        console.error("No conversation ID found.");
+        return;
+    }
 
+    try {
+        // Determine the other participant in the conversation
+        const [id1, id2] = conversationId.split('_');
+        const claimerId = id1 === user.uid ? id2 : id1; // The other participant
 
-       try {
-           const conversationRef = ref(database, `messages/${conversationId}`);
-           const itemRef = ref(database, `foundItems/${itemId}`);
+        if (!claimerId) {
+            console.error("Could not determine claimer.");
+            return;
+        }
 
+        console.log(`Marking item ${itemId} as claimed by ${claimerId}`);
 
-           // Update claimedItems in the conversation
-           await update(conversationRef, {
-               [`claimedItems/${itemId}`]: {
-                   claimedBy: user.uid,
-                   claimedAt: new Date().toISOString()
-               }
-           });
+        const conversationRef = ref(database, `messages/${conversationId}`);
+        const itemRef = ref(database, `foundItems/${itemId}`);
 
+        // Update claimedItems in the conversation
+        await update(conversationRef, {
+            [`claimedItems/${itemId}`]: {
+                claimedBy: claimerId,
+                claimedAt: new Date().toISOString()
+            }
+        });
 
-           // Update the found item itself to reflect it’s claimed
-           await update(itemRef, {
-               isClaimed: true,
-               claimedBy: user.uid,
-               claimedAt: new Date().toISOString()
-           });
+        // Update the found item itself to reflect it’s claimed
+        await update(itemRef, {
+            isClaimed: true,
+            claimedBy: claimerId,
+            claimedAt: new Date().toISOString()
+        });
 
+        // Update local state
+        setClaimedItems((prev) => ({
+            ...prev,
+            [itemId]: { claimedBy: claimerId, claimedAt: new Date().toISOString() }
+        }));
 
-           // Update local state
-           setClaimedItems((prev) => ({
-               ...prev,
-               [itemId]: { claimedBy: user.uid, claimedAt: new Date().toISOString() }
-           }));
+       // ✅ Set toast message and show toast
+       setToastMessage("✅ Item successfully marked as claimed!");
+       setShowToast(true);
 
+    } catch (error) {
+        console.error("Error marking item as claimed:", error);
+    }
+};
 
-           alert("Item successfully marked as claimed!");
-       } catch (error) {
-           console.error("Error marking item as claimed:", error);
-       }
-   };
 
 
    const renderView = () => {
@@ -172,7 +186,6 @@ const MessagingApp = ({ user }) => {
         const messageList = conversation.messages ? Object.values(conversation.messages) : [];
         const lastMessage = messageList.length > 0 ? messageList[messageList.length - 1] : null;
 
-        console.log("Extracted last message:", lastMessage);
 
         // Ensure `otherParticipantId` is computed correctly
         let otherParticipantId = null;
@@ -184,13 +197,11 @@ const MessagingApp = ({ user }) => {
             }
         }
 
-        console.log("Computed otherParticipantId:", otherParticipantId);
 
         // Ensure we correctly find the other participant
         const otherParticipant = users.find((u) => u.uid === otherParticipantId);
         const otherDisplayName = otherParticipant ? otherParticipant.displayName : "Unknown";
 
-        console.log("Final match:", otherDisplayName);
 
         return (
             <ListGroup.Item key={id} action onClick={() => navigate(`/messages/${id}`)}>
@@ -220,23 +231,37 @@ const MessagingApp = ({ user }) => {
                <h3>Items in This Conversation</h3>
                {items.length > 0 ? (
                    items.map((item) => (
-                       <Card key={item.id} className="mb-3">
-                           <Card.Body>
-                               <Card.Title>{item.title}</Card.Title>
-                               <Card.Text>{item.description}</Card.Text>
-                               {claimedItems[item.id] ? (
-                                   <Button variant="success" disabled>
-                                       Claimed by {users[claimedItems[item.id].claimedBy]?.displayName || "Unknown"}
-                                   </Button>
-                               ) : (
-                                   user.uid === item.postedBy && (
-                                       <Button variant="primary" onClick={() => markAsClaimed(item.id, item.postedBy)}>
-                                           Mark as Claimed
-                                       </Button>
-                                   )
-                               )}
-                           </Card.Body>
-                       </Card>
+                    <Card key={item.id} className="mb-3">
+                    <Card.Body>
+                        <Card.Title>{item.title}</Card.Title>
+                        <Card.Text>{item.description}</Card.Text>
+                
+                        {claimedItems[item.id] ? (
+                            (() => {
+                                const claimedById = claimedItems[item.id]?.claimedBy;
+                               
+                
+                                const claimedByUser = users.find((u) => u.uid === claimedById);
+                
+                                return (
+                                    <Button variant="success" disabled>
+                                        Claimed by {claimedByUser ? claimedByUser.displayName : "Unknown"}
+                                    </Button>
+                                );
+                            })()
+                        ) : (
+                            user.uid === item.postedBy && (
+                                <Button
+                                    variant="primary"
+                                    onClick={() => markAsClaimed(item.id)}
+                                >
+                                    Mark as Claimed
+                                </Button>
+                            )
+                        )}
+                    </Card.Body>
+                </Card>
+                
                    ))
                ) : (
                    <p>No items linked to this conversation.</p>
@@ -285,6 +310,18 @@ const MessagingApp = ({ user }) => {
                        </Col>
                    </Row>
                </Form>
+
+               <ToastContainer position="top-end" className="p-3">
+                   <Toast
+                       onClose={() => setShowToast(false)}
+                       show={showToast}
+                       delay={3000}
+                       autohide
+                       bg="success"
+                   >
+                       <Toast.Body>{toastMessage}</Toast.Body>
+                   </Toast>
+               </ToastContainer>
 
 
        {/* Add Back to Conversations Button Here */}
