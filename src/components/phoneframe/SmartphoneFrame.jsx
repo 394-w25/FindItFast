@@ -3,7 +3,7 @@ import './SmartphoneFrame.css';
 
 const SmartphoneFrame = ({ children }) => {
   return (
-    <div class="smartphone-container">
+    <div className="smartphone-container">
       <div className="smartphone">
         <div className="smartphone-notch"></div>
         <div className="smartphone-content">{children}</div>

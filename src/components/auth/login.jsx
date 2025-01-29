@@ -21,7 +21,7 @@ const Login = () => {
                 return;
             }
             await loginWithEmail(email, password); // Use Firebase email-password login
-            navigate('/found'); // Redirect on successful login
+            navigate('/'); // Redirect on successful login
         } catch (err) {
             setError(err.message); // Display Firebase error message
         }
@@ -53,7 +53,7 @@ const Login = () => {
                 await (update(userData));
             }
 
-            navigate('/found');
+            navigate('/');
 
         } catch (err) {
             setError(err.message);

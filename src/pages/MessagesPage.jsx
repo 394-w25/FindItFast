@@ -218,7 +218,7 @@ const MessagingApp = ({ user }) => {
 </ListGroup>
 
 
-                   <Button variant="secondary" className="mt-3" onClick={() => navigate('/found')}>
+                   <Button variant="secondary" className="mt-3" onClick={() => navigate('/')}>
                        Start New Conversation
                    </Button>
                </Container>

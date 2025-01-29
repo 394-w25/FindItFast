@@ -5,6 +5,8 @@
     align-items: center;
     gap: 10px;
     font-family: 'Poppins', sans-serif;
+    text-decoration: none;
+    cursor: pointer;
 }
 
 .logo-icon {
