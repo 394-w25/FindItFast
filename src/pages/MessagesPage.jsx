@@ -137,6 +137,7 @@ const MessagingApp = ({ user }) => {
 
         const conversationRef = ref(database, `messages/${conversationId}`);
         const itemRef = ref(database, `foundItems/${itemId}`);
+        const claimerUserRef = ref(database, `users/${claimerId}/claimedItems`);
 
         // Update claimedItems in the conversation
         await update(conversationRef, {
@@ -152,6 +153,11 @@ const MessagingApp = ({ user }) => {
             claimedBy: claimerId,
             claimedAt: new Date().toISOString()
         });
+
+        // Add the item ID to the claimer's claimedItems list
+        const claimerSnapshot = await get(claimerUserRef);
+        const currentClaimedItems = claimerSnapshot.exists() ? claimerSnapshot.val() : [];
+        await update(claimerUserRef, [...currentClaimedItems, itemId]);
 
         // Update local state
         setClaimedItems((prev) => ({
