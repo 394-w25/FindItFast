@@ -5,15 +5,16 @@ import Modal from '../components/foundfeed/modal';
 import MapView from '../components/foundfeed/mapview';
 import SearchBar from '../components/foundfeed/searchbar';
 import { database, useDbData } from '../utilities/firebase';
-import { ref, set, update, get } from 'firebase/database';
+import { ref, set, update, get, push } from 'firebase/database';
 import { useNavigate } from 'react-router-dom';
 import './FoundFeedPage.css';
+import DisputePage from './DisputePage';
 
 const FoundFeedPage = ({ currentUser }) => {
   const [items, setItems] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
-  const [viewMode, setViewMode] = useState('list'); // 'list' or 'map'
+  const [viewMode, setViewMode] = useState('list');
   const [searchQuery, setSearchQuery] = useState('');
   const [activeTab, setActiveTab] = useState('found');
   const [data, error] = useDbData('foundItems');
@@ -34,12 +35,11 @@ const FoundFeedPage = ({ currentUser }) => {
 
   useEffect(() => {
     if (userData) {
-      setUsers(userData); // Store user profile data
+      setUsers(userData);
     }
   }, [userData]);
 
   useEffect(() => {
-    // Fetch claimed items from conversations
     const conversationsRef = ref(database, 'messages');
     get(conversationsRef).then((snapshot) => {
       const conversations = snapshot.val() || {};
@@ -48,7 +48,7 @@ const FoundFeedPage = ({ currentUser }) => {
       Object.values(conversations).forEach((conversation) => {
         if (conversation.claimedItems) {
           Object.keys(conversation.claimedItems).forEach((itemId) => {
-            claimedItemsMap[itemId] = conversation.claimedItems[itemId]; // Store claimed status
+            claimedItemsMap[itemId] = conversation.claimedItems[itemId];
           });
         }
       });
@@ -79,7 +79,6 @@ const FoundFeedPage = ({ currentUser }) => {
     setSearchQuery(query.toLowerCase());
   };
 
-  // Modified Handle Claim Function to Support Multiple Items
   const handleClaim = async (item) => {
     const posterId = item.postedBy;
     const itemId = item.id;
@@ -88,7 +87,6 @@ const FoundFeedPage = ({ currentUser }) => {
       return;
     }
 
-    // Generate conversationId
     const conversationId = [currentUser.uid, posterId].sort().join('_');
     const conversationRef = ref(database, `messages/${conversationId}`);
 
@@ -103,27 +101,31 @@ const FoundFeedPage = ({ currentUser }) => {
         }
 
         await update(conversationRef, {
-          itemIds: updatedItemIds
+          itemIds: updatedItemIds,
         });
       } else {
         await set(conversationRef, {
           itemIds: [itemId],
-          claimedItems: {} // Initialize empty claimed items tracker
+          claimedItems: {},
         });
       }
 
       navigate(`/messages/${conversationId}`);
     } catch (error) {
-      console.error("Error handling claim:", error);
+      console.error('Error handling claim:', error);
     }
   };
 
-  const filteredItems = items.filter((item) =>
-    item.title.toLowerCase().includes(searchQuery) ||
-    item.description.toLowerCase().includes(searchQuery)
+  const handleDispute = (item) => {
+    navigate(`/dispute/${item.id}`); // Navigate to the dispute page with the item ID
+  };
+
+  const filteredItems = items.filter(
+    (item) =>
+      item.title.toLowerCase().includes(searchQuery) ||
+      item.description.toLowerCase().includes(searchQuery)
   );
 
-  // Separate found vs. claimed items dynamically
   const displayedItems = filteredItems.filter((item) =>
     activeTab === 'found' ? !item.isClaimed : item.isClaimed
   );
@@ -131,11 +133,7 @@ const FoundFeedPage = ({ currentUser }) => {
   return (
     <div className="found-feed">
       <header className="found-feed-header">
-        <Tabs
-          activeKey={activeTab}
-          onSelect={(key) => setActiveTab(key)}
-          className="found-feed-tabs"
-        >
+        <Tabs activeKey={activeTab} onSelect={(key) => setActiveTab(key)} className="found-feed-tabs">
           <Tab eventKey="found" title={<span className="custom-tab-title">Found Items</span>} />
           <Tab eventKey="claimed" title={<span className="custom-tab-title">Claimed Items</span>} />
         </Tabs>
@@ -166,7 +164,9 @@ const FoundFeedPage = ({ currentUser }) => {
                 user={users[item.postedBy]}
                 onViewMap={openModal}
                 onClaim={handleClaim}
+                onDispute={() => handleDispute(item)}
                 showClaimButton={!item.isClaimed}
+                showDisputeButton={item.isClaimed}
               />
             ))}
           </div>
