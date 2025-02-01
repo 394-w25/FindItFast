@@ -108,55 +108,13 @@ const FoundFeedPage = ({ currentUser }) => {
       } else {
         await set(conversationRef, {
           itemIds: [itemId],
-          claimedItems: {}, // Initialize empty claimed items tracker
-          isDispute: false,
+          claimedItems: {} // Initialize empty claimed items tracker
         });
       }
 
       navigate(`/messages/${conversationId}`);
     } catch (error) {
       console.error("Error handling claim:", error);
-    }
-  };
-
-  // Modified Handle Dispute Function to Support Multiple Items
-  const handleDispute = async (item) => {
-    const posterId = item.postedBy;
-    const claimerId = item.claimedBy;
-    const itemId = item.id;
-    if (!posterId || posterId === currentUser.uid) {
-      alert("You can't dispute your own item!");
-      return;
-    }
-
-    // Generate conversationId
-    const conversationId = [currentUser.uid, posterId, claimerId].sort().join('_');
-    const conversationRef = ref(database, `messages/${conversationId}`);
-
-    try {
-      const snapshot = await get(conversationRef);
-      let conversationData = snapshot.val();
-
-      if (conversationData) {
-        let updatedItemIds = conversationData.itemIds || [];
-        if (!updatedItemIds.includes(itemId)) {
-          updatedItemIds.push(itemId);
-        }
-
-        await update(conversationRef, {
-          itemIds: updatedItemIds
-        });
-      } else {
-        await set(conversationRef, {
-          itemIds: [itemId],
-          claimedItems: {}, // Initialize empty claimed items tracker
-          isDispute: true,
-        });
-      }
-
-      navigate(`/messages/${conversationId}`);
-    } catch (error) {
-      console.error("Error handling dispute:", error);
     }
   };
 
@@ -208,9 +166,7 @@ const FoundFeedPage = ({ currentUser }) => {
                 user={users[item.postedBy]}
                 onViewMap={openModal}
                 onClaim={handleClaim}
-                onDispute={handleDispute}
                 showClaimButton={!item.isClaimed}
-                showDisputeButton={item.isClaimed}
               />
             ))}
           </div>

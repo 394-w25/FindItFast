@@ -2,7 +2,7 @@
 
 .post-item-page {
     max-width: 600px;
-    /* margin: 20px auto; Añadido margen superior e inferior */
+    margin: 20px auto; /* Añadido margen superior e inferior */
     padding: 20px;
     border: 1px solid #ddd;
     border-radius: 8px;
