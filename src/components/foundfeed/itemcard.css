@@ -112,31 +112,14 @@
   color: #fff;
   border: none;
   padding: 8px 12px;
-  border-radius: 50px;
+  border-radius: 25px;
   cursor: pointer;
   font-size: 14px;
   display: flex;
   align-items: center;
 }
 
-.dispute-button {
-  background-color: #6a4cc3;
-  color: #fff;
-  border: none;
-  padding: 8px 12px;
-  border-radius: 50px;
-  cursor: pointer;
-  font-size: 16px;
-  display: flex;
-  align-items: center;
-}
-
-
 .claim-button:hover {
-  background-color: #533a91;
-}
-
-.dispute-button:hover {
   background-color: #533a91;
 }
 
@@ -145,7 +128,7 @@
   color: #fff;
   border: none;
   padding: 8px 12px;
-  border-radius: 50px;
+  border-radius: 25px;
   cursor: pointer;
   font-size: 14px;
   display: flex;

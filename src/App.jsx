@@ -10,7 +10,6 @@ import Header from './components/header/Header';
 import { useAuthState } from './utilities/firebase';
 import SmartphoneFrame from './components/phoneframe/SmartphoneFrame';
 import './App.css';
-import ClaimedPage from './pages/ClaimedFeedPage';
 
 const App = () => {
   const [user, loading, error] = useAuthState();
@@ -39,8 +38,6 @@ const App = () => {
               <Route path="/messages/:conversationId" element={<MessagingApp user={user} />} />
               <Route path="/profile" element={<ProfilePage />} />
               <Route path="/postfound" element={<PostItemPage />} />
-              <Route path="/found" element={<FoundFeedPage />} />
-              <Route path="/claimed" element={<ClaimedPage />} />
             </Routes>
           </div>
           <NavigationBar />

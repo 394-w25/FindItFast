@@ -6,7 +6,7 @@ import { PersonCircle } from 'react-bootstrap-icons';
 import { Card } from 'react-bootstrap';
 import { useAuthState, useDbData } from '../../utilities/firebase';
 
-const ItemCard = ({ item, user, onViewMap, onClaim = {}, onDispute = {}, showClaimButton = true, showUserWhoClaimed = true, showDisputeButton = false }) => {
+const ItemCard = ({ item, user, onViewMap, onClaim = {}, showClaimButton = true, showUserWhoClaimed = true }) => {
   const [currUser] = useAuthState();
   const [allUsers, usersError] = useDbData(`users`);
 
@@ -21,10 +21,6 @@ const ItemCard = ({ item, user, onViewMap, onClaim = {}, onDispute = {}, showCla
 
   const handleClaim = () => {
     onClaim(item); // Call the onClaim function passed from the parent component
-  };
-
-  const handleDispute = () => {
-    onDispute(item); // Call the onClaim function passed from the parent component
   };
 
   // Calculate "found X hours ago"
@@ -79,14 +75,6 @@ const ItemCard = ({ item, user, onViewMap, onClaim = {}, onDispute = {}, showCla
       </Card.Body>
 
       <Card.Footer className="item-actions">
-        {showDisputeButton && !isOwner && (
-          <button
-            className="dispute-button"
-            onClick={handleDispute}
-          >
-            Dispute
-          </button>
-        )}
         {showClaimButton && !isOwner && (
           <button className="claim-button" onClick={handleClaim}>
             Claim
