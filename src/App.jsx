@@ -6,6 +6,7 @@ import FoundFeedPage from './pages/FoundFeedPage';
 import ProfilePage from './pages/ProfilePage';
 import PostItemPage from './pages/PostItemPage';
 import NavigationBar from './components/navigation/NavigationBar';
+import DisputePage from './pages/DisputePage';
 import Header from './components/header/Header';
 import { useAuthState } from './utilities/firebase';
 import SmartphoneFrame from './components/phoneframe/SmartphoneFrame';
@@ -38,6 +39,7 @@ const App = () => {
               <Route path="/messages/:conversationId" element={<MessagingApp user={user} />} />
               <Route path="/profile" element={<ProfilePage />} />
               <Route path="/postfound" element={<PostItemPage />} />
+              <Route path="/dispute/:itemId" element={<DisputePage user={user} />} />
             </Routes>
           </div>
           <NavigationBar />
