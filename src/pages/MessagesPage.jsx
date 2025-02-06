@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import './MessagesPage.css';
 import { database } from '../utilities/firebase';
 import { ref, push, onValue, update, get } from 'firebase/database';
@@ -21,7 +21,7 @@ const MessagingApp = ({ user }) => {
    const [claimedItems, setClaimedItems] = useState({}); // Store claimed item statuses
    const [showToast, setShowToast] = useState(false);
    const [toastMessage, setToastMessage] = useState('');
-
+   const messagesEndRef = useRef(null);
 
 
 
@@ -80,6 +80,12 @@ const MessagingApp = ({ user }) => {
            });
        }
    }, [conversationId]);
+
+   useEffect(() => {
+    if (messagesEndRef.current) {
+        messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+}, [messages]); // Runs every time messages update
 
 
    // Fetch item details from 'foundItems' using item IDs stored in the conversation
@@ -233,109 +239,101 @@ const MessagingApp = ({ user }) => {
 
 
        return (
-           <Container className="messages-page">
-               <h3>Items in This Conversation</h3>
-               {items.length > 0 ? (
-                   items.map((item) => (
-                    <Card key={item.id} className="mb-3">
-                    <Card.Body>
-                        <Card.Title>{item.title}</Card.Title>
-                        <Card.Text>{item.description}</Card.Text>
-                
-                        {claimedItems[item.id] ? (
-                            (() => {
-                                const claimedById = claimedItems[item.id]?.claimedBy;
-                               
-                
-                                const claimedByUser = users.find((u) => u.uid === claimedById);
-                
-                                return (
-                                    <Button variant="success" disabled>
-                                        Claimed by {claimedByUser ? claimedByUser.displayName : "Unknown"}
-                                    </Button>
-                                );
-                            })()
-                        ) : (
-                            user.uid === item.postedBy && (
-                                <Button
-                                    variant="primary"
-                                    onClick={() => markAsClaimed(item.id)}
-                                >
-                                    Mark as Claimed
-                                </Button>
-                            )
-                        )}
-                    </Card.Body>
-                </Card>
-                
-                   ))
-               ) : (
-                   <p>No items linked to this conversation.</p>
-               )}
+        <Container className="messages-page">
+            
+            {/* Items Section - Limited Height */}
+            <div className="items-container">
+    <div className="items-header">Items in This Conversation</div>
+    {items.length > 0 ? (
+        items.map((item) => (
+            <div key={item.id} className="item-card">
+                <div className="item-title">{item.title}</div>
+                <div className="item-description">{item.description}</div>
+                {claimedItems[item.id] ? (
+                    (() => {
+                        const claimedById = claimedItems[item.id]?.claimedBy;
+                        const claimedByUser = users.find((u) => u.uid === claimedById);
+                        return (
+                            <button className="item-button" disabled>
+                                Claimed by {claimedByUser ? claimedByUser.displayName : "Unknown"}
+                            </button>
+                        );
+                    })()
+                ) : (
+                    user.uid === item.postedBy && (
+                        <button className="item-button" onClick={() => markAsClaimed(item.id)}>
+                            Mark as Claimed
+                        </button>
+                    )
+                )}
+            </div>
+        ))
+    ) : (
+        <p className="items-header">No items linked to this conversation.</p>
+    )}
+</div>
 
 
-               <div className="messages-list">
-                   {messages.length > 0 ? (
-                       messages.map((msg, index) => (
-                           <div
-                               key={index}
-                               className={`message ${msg.senderId === user.uid ? 'sent' : 'received'}`}
-                           >
-                               <p>{msg.content}</p>
-                               <small>{new Date(msg.timestamp).toLocaleString()}</small>
-                           </div>
-                       ))
-                   ) : (
-                       <p className="no-messages">
-                           {conversationExists
-                               ? 'No messages in this conversation yet.'
-                               : 'Start a new conversation by sending a message.'}
-                       </p>
-                   )}
-               </div>
-               <Form
-                   className="message-input mt-3"
-                   onSubmit={(e) => {
-                       e.preventDefault();
-                       sendMessage();
-                   }}
-               >
-                   <Row>
-                       <Col>
-                           <Form.Control
-                               type="text"
-                               placeholder="Type your message"
-                               value={newMessage}
-                               onChange={(e) => setNewMessage(e.target.value)}
-                           />
-                       </Col>
-                       <Col xs="auto">
-                           <Button type="submit" variant="primary">
-                               Send
-                           </Button>
-                       </Col>
-                   </Row>
-               </Form>
+            {/* Messages and Chat Input */}
+            <div className="messages-container">
+    <div className="messages-list">
+        {messages.length > 0 ? (
+            messages.map((msg, index) => (
+                <div key={index} className={`message ${msg.senderId === user.uid ? 'sent' : 'received'}`}>
+                    <p>{msg.content}</p>
+                    <small>{new Date(msg.timestamp).toLocaleString()}</small>
+                </div>
+            ))
+        ) : (
+            <p className="no-messages">
+                {conversationExists ? 'No messages in this conversation yet.' : 'Start a new conversation by sending a message.'}
+            </p>
+        )}
+        {/* Invisible div to auto-scroll */}
+        <div ref={messagesEndRef} />
+        {/* Spacer to prevent messages from being hidden behind input */}
+        <div className="message-spacing"></div>
+    </div>
 
-               <ToastContainer position="top-end" className="p-3">
-                   <Toast
-                       onClose={() => setShowToast(false)}
-                       show={showToast}
-                       delay={3000}
-                       autohide
-                       bg="success"
-                   >
-                       <Toast.Body>{toastMessage}</Toast.Body>
-                   </Toast>
-               </ToastContainer>
+    {/* Sticky Input Box */}
+    <Form className="message-input" onSubmit={(e) => {
+        e.preventDefault();
+        sendMessage();
+    }}>
+        <Row className="w-100">
+            <Col>
+                <Form.Control
+                    type="text"
+                    placeholder="Type your message"
+                    value={newMessage}
+                    onChange={(e) => setNewMessage(e.target.value)}
+                />
+            </Col>
+            <Col xs="auto">
+                <Button type="submit" variant="primary">
+                    Send
+                </Button>
+            </Col>
+        </Row>
+    </Form>
+</div>
 
-
-       {/* Add Back to Conversations Button Here */}
-       <Button variant="secondary" className="mt-3" onClick={() => navigate('/messages')}>
-           Back to Conversations
-       </Button>
-           </Container>
-       );
+    
+            {/* Toast Notification */}
+            <ToastContainer position="top-end" className="p-3">
+                <Toast onClose={() => setShowToast(false)} show={showToast} delay={3000} autohide bg="success">
+                    <Toast.Body>{toastMessage}</Toast.Body>
+                </Toast>
+            </ToastContainer>
+    
+            {/* Back to Conversations Button */}
+            <Button variant="secondary" className="mt-3" onClick={() => navigate('/messages')}>
+                Back to Conversations
+            </Button>
+        </Container>
+    );
+    
+     
    };
 
 
