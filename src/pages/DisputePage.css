@@ -75,6 +75,13 @@ textarea:focus {
     margin: 50px auto;
 }
 
+.error-message {
+    color: red;
+    font-size: 14px;
+    margin-top: 10px;
+    margin-bottom: 20px;
+  }
+
 @keyframes spin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
